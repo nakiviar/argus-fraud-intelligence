@@ -1,10 +1,16 @@
 # Architecture
 
-ARGUS is a modular monolith shipped as one Spring Boot application. Java package boundaries keep the domain independent of Spring, Spring AI, Azure, and JSON libraries. Phase 02 implements the Hot Path using the shared domain contracts and leaves the Investigation Path available as a future extension.
+ARGUS is a modular monolith shipped as one Spring Boot application. Java package boundaries keep the domain independent of Spring, Spring AI, Azure, and JSON libraries. The Hot Path uses the shared domain contracts. Phase 03 adds a model connectivity diagnostic as a separate entry point.
 
 ## Hot Path
 
 Assess a synthetic transaction synchronously. The deterministic Rules Engine, graph data provider, and Synthetic ML Predictor supply typed inputs to the Deterministic Risk Decision Engine. The engine emits APPROVE, REVIEW, or BLOCK with the policy version, signals, and explicit unavailable sources. Every input comes from deterministic code or source data. The Hot Path has zero dependency on an LLM or the Investigation Path. The REST adapter in `pe.jconf.argus.assessment.web` accepts only built-in scenario identifiers. The `pe.jconf.argus.assessment` package contains the policies, service, provider ports, local adapters, and volatile audit store. See the [deterministic baseline](deterministic-baseline.md) for policy semantics and responsibilities.
+
+## Model connectivity diagnostic
+
+The `pe.jconf.argus.ai` package selects one adapter through the active profile. The `demo-local` adapter emits a simulated result and creates no OpenAI client. The `demo-azure` adapter validates its configuration and constructs a dedicated ChatClient. Only the explicitly invoked CLI diagnostic calls the configured model. It sends a fixed acknowledgement prompt and exposes only an allowlisted response and categorized errors. The assessment and domain packages have no dependency on this adapter.
+
+See [Azure integration](azure-integration.md) for the endpoint and authentication boundary.
 
 ## Investigation Path
 
@@ -37,6 +43,6 @@ flowchart LR
 | Application-owned outcome metadata | Investigations remain attributable when model output is invalid or unavailable. |
 | Explicit availability in both paths | Policy and human reviewers can account for missing inputs without treating missing data as zero risk. |
 
-The future resilience layer will bound latency and concurrency. Audit and observability will correlate decisions, investigation reports, and execution outcomes using Micrometer and OpenTelemetry. The existing `demo-local` profile starts offline and exposes health on loopback. The existing `demo-azure` profile supports external Foundry configuration. The Hot Path uses bundled synthetic fixtures in the running application. Investigation workflows and provider integration are future work.
+The future resilience layer will bound latency and concurrency. Audit and observability will correlate decisions, investigation reports, and execution outcomes using Micrometer and OpenTelemetry. Both profiles expose the assessment API and health on loopback when running as a web application. Investigation workflows and agent engineering are future work.
 
 See [Domain model](domain-model.md) for contract ownership and examples.

@@ -2,11 +2,11 @@
 
 **Agents investigate. Deterministic code decides.**
 
-ARGUS is a fictional banking fraud investigation proof of concept for JConf Peru 2026. Phase 02 implements the offline Hot Path and exposes a local API for synthetic assessments. The future Investigation Path will gather evidence for human review after a REVIEW recommendation.
+ARGUS is a fictional banking fraud investigation proof of concept for JConf Peru 2026. ARGUS exposes an offline Hot Path for synthetic assessments. Phase 03 adds a separate command-line connectivity diagnostic for Microsoft Foundry. The future Investigation Path will gather evidence for human review after a REVIEW recommendation.
 
 ## Prerequisites
 
-Use a Java 21 JDK installed outside the project build directory and Maven 3.9.x. Select the JDK for the current shell. For example, PowerShell can use a persistent JDK installed under the user profile:
+Use a Java 21 JDK installed outside the project build directory and Maven 3.9.9. Select the JDK for the current shell. For example, PowerShell can use a persistent JDK installed under the user profile:
 
 ```powershell
 $env:JAVA_HOME = "$env:USERPROFILE\.jdks\ms-21.0.8"
@@ -33,20 +33,21 @@ Invoke-RestMethod "$base/api/v1/assessments" -Method Post -ContentType 'applicat
 
 The normal scenario returns APPROVE. The assessment is stored in memory until the process stops. See the [API guide](docs/api.md) for all endpoints and examples.
 
-## Microsoft Foundry profile
+## Model connectivity diagnostic
 
-Set `AZURE_OPENAI_BASE_URL` to your Azure OpenAI v1 base URL, such as `https://RESOURCE.openai.azure.com/openai/v1/`. Set `AZURE_OPENAI_DEPLOYMENT` to the chat deployment name and supply `AZURE_OPENAI_API_KEY` through the environment or a secret provider. Launch with:
-
-```sh
-java -jar target/argus-fraud-intelligence-0.1.0-SNAPSHOT.jar --spring.profiles.active=demo-azure
+```powershell
+$jar = 'target/argus-fraud-intelligence-0.1.0-SNAPSHOT.jar'
+java -jar $jar --spring.profiles.active=demo-local --check-model-connectivity
 ```
 
-Phase 0 configures the chat client. The health endpoint checks application health and does not call the deployment.
+The offline diagnostic prints a SIMULATED result and exits. The `demo-azure` profile requires `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_DEPLOYMENT`, and a short-lived `AZURE_OPENAI_ACCESS_TOKEN` from Microsoft Entra ID. See the [Azure integration guide](docs/azure-integration.md) for safe PowerShell instructions and the explicitly invoked Azure check. Ordinary startup and Actuator health perform no inference.
 
 ## Project documentation
 
 - [Contributor instructions](AGENTS.md)
 - [Architecture](docs/architecture.md)
+- [Azure integration](docs/azure-integration.md)
+- [Spring AI foundations](docs/spring-ai-foundations.md)
 - [Deterministic baseline](docs/deterministic-baseline.md)
 - [API guide](docs/api.md)
 - [Domain model](docs/domain-model.md)
