@@ -1,6 +1,8 @@
 package pe.jconf.argus.investigation;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.core.io.ClassPathResource;
+import pe.jconf.argus.domain.Decision;
 import pe.jconf.argus.domain.InvestigationContext;
 import pe.jconf.argus.domain.RiskDecision;
 import pe.jconf.argus.domain.Transaction;
@@ -21,11 +23,9 @@ final class InvestigationFixtures {
     InvestigationFixtures(JsonMapper mapper) throws IOException {
         var found = new HashMap<String, Scenario>();
         try (var input = new ClassPathResource("synthetic/scenarios.json").getInputStream()) {
-            for (var json : mapper.readTree(input)) {
-                var transaction = mapper.treeToValue(json.required("transaction"), Transaction.class);
-                var snapshot = mapper.treeToValue(json.required("expectedDecision"), RiskDecision.class);
-                found.put(json.required("scenario").stringValue(),
-                        new Scenario(transaction, snapshot, json.get("invalidAgentPayload")));
+            // Direct deserialization preserves the monetary scale used by the provider's fixture lookup.
+            for (var scenario : mapper.readValue(input, Scenario[].class)) {
+                found.put(scenario.scenario(), scenario);
             }
         }
         scenarios = Map.copyOf(found);
@@ -38,10 +38,13 @@ final class InvestigationFixtures {
 
     Optional<InvestigationContext> open(String scenarioId) {
         return Optional.ofNullable(scenarios.get(scenarioId))
-                .filter(scenario -> scenario.snapshot().decision() == pe.jconf.argus.domain.Decision.REVIEW)
-                .map(scenario -> new InvestigationContext(UUID.randomUUID(), scenario.transaction(), scenario.snapshot(),
-                        Instant.now().isBefore(scenario.snapshot().decidedAt())
-                                ? scenario.snapshot().decidedAt() : Instant.now()));
+                .filter(scenario -> scenario.expectedDecision().decision() == Decision.REVIEW)
+                .map(scenario -> {
+                    var snapshot = scenario.expectedDecision();
+                    var now = Instant.now();
+                    var openedAt = now.isBefore(snapshot.decidedAt()) ? snapshot.decidedAt() : now;
+                    return new InvestigationContext(UUID.randomUUID(), scenario.transaction(), snapshot, openedAt);
+                });
     }
 
     Scenario require(InvestigationContext context) {
@@ -54,6 +57,8 @@ final class InvestigationFixtures {
         return Optional.ofNullable(historicalCounts.get(transaction.transactionId()));
     }
 
-    record Scenario(Transaction transaction, RiskDecision snapshot, JsonNode invalidAgentPayload) {
+    @JsonIgnoreProperties({"hotPath", "expectedAgentStatuses"})
+    record Scenario(String scenario, Transaction transaction, RiskDecision expectedDecision,
+                    JsonNode invalidAgentPayload) {
     }
 }

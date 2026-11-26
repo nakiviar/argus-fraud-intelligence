@@ -1,6 +1,6 @@
 # Architecture
 
-ARGUS is a modular monolith shipped as one Spring Boot application. Java package boundaries keep the domain independent of Spring, Spring AI, Azure, and JSON libraries. The Hot Path uses the shared domain contracts. Phase 03 adds a model connectivity diagnostic as a separate entry point.
+ARGUS is a modular monolith shipped as one Spring Boot application. Java package boundaries keep the domain independent of Spring, Spring AI, Azure, and JSON libraries. The Hot Path uses the shared domain contracts. The model connectivity and independent agent diagnostics have command-line entry points separate from the Hot Path.
 
 ## Hot Path
 
@@ -12,11 +12,15 @@ The `pe.jconf.argus.ai` package selects one adapter through the active profile. 
 
 See [Azure integration](azure-integration.md) for the endpoint and authentication boundary.
 
-## Investigation Path
+## Independent investigation agents
+
+Phase 04 packages both agents in `pe.jconf.argus.investigation`. The command line selects one agent for a bundled REVIEW snapshot. Each execution receives its own authorization scope and callback ledger. Java validates citations and supported findings before creating the existing agent execution contract. Local and Foundry adapters share the authorization and evidence validation code. See [Agent Engineering](agent-engineering.md).
+
+## Planned orchestrated Investigation Path
 
 Phase 02 exposes `investigationRequired: true` for REVIEW. A later phase will open an investigation with a snapshot of the transaction and its Hot Path decision. The orchestrator will run the Graph Investigation Agent and Behavioral Investigation Agent concurrently with bounded fan-out/fan-in. Tools will read narrowly scoped synthetic data and the application will record each tool execution. The evidence validator will resolve candidate citations against the recorded results for the current investigation and agent. The orchestrator will report each execution outcome, including timeouts and unavailable evidence.
 
-The report supplies context to a human reviewer. The original decision remains available in the report. Agents have no financial operations or decision override capability. The dashboard will present the decision alongside the report for human review.
+The planned report supplies context to a human reviewer. The original decision remains available in the report. Agents have no financial operations or decision override capability. The dashboard will present the decision alongside the report for human review.
 
 ```mermaid
 flowchart LR
@@ -43,6 +47,6 @@ flowchart LR
 | Application-owned outcome metadata | Investigations remain attributable when model output is invalid or unavailable. |
 | Explicit availability in both paths | Policy and human reviewers can account for missing inputs without treating missing data as zero risk. |
 
-The future resilience layer will bound latency and concurrency. Audit and observability will correlate decisions, investigation reports, and execution outcomes using Micrometer and OpenTelemetry. Both profiles expose the assessment API and health on loopback when running as a web application. Investigation workflows and agent engineering are future work.
+The future resilience layer will bound latency and concurrency. Audit and observability will correlate decisions, investigation reports, and execution outcomes using Micrometer and OpenTelemetry. Both profiles expose the assessment API and health on loopback when running as a web application. Concurrent orchestration, report aggregation, and workflow integration remain future work.
 
 See [Domain model](domain-model.md) for contract ownership and examples.

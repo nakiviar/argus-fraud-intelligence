@@ -6,7 +6,9 @@ import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.ai.model.tool.DefaultToolCallingManager;
 import org.springframework.ai.model.tool.ToolCallLimitBehavior;
 import org.springframework.ai.openai.OpenAiChatOptions;
+import tools.jackson.core.StreamReadFeature;
 import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 final class SpringAiAgentModel implements AgentModel {
@@ -16,8 +18,9 @@ final class SpringAiAgentModel implements AgentModel {
         @Override
         protected JsonMapper getJsonMapper() {
             return JsonMapper.builder().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-                    DeserializationFeature.FAIL_ON_TRAILING_TOKENS,
-                    DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY).build();
+                    DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+                    .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
+                    .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS).build();
         }
     };
 

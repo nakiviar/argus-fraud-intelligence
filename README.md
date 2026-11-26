@@ -2,7 +2,7 @@
 
 **Agents investigate. Deterministic code decides.**
 
-ARGUS is a fictional banking fraud investigation proof of concept for JConf Peru 2026. ARGUS exposes an offline Hot Path for synthetic assessments. Phase 03 adds a separate command-line connectivity diagnostic for Microsoft Foundry. The future Investigation Path will gather evidence for human review after a REVIEW recommendation.
+ARGUS is a fictional banking fraud investigation proof of concept for JConf Peru 2026. ARGUS exposes an offline Hot Path for synthetic assessments. Phase 03 adds a separate command-line connectivity diagnostic for Microsoft Foundry. Phase 04 adds two independently executable investigation agents for synthetic REVIEW cases.
 
 ## Prerequisites
 
@@ -42,12 +42,25 @@ java -jar $jar --spring.profiles.active=demo-local --check-model-connectivity
 
 The offline diagnostic prints a SIMULATED result and exits. The `demo-azure` profile requires `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_DEPLOYMENT`, and a short-lived `AZURE_OPENAI_ACCESS_TOKEN` from Microsoft Entra ID. See the [Azure integration guide](docs/azure-integration.md) for safe PowerShell instructions and the explicitly invoked Azure check. Ordinary startup and Actuator health perform no inference.
 
+## Run an investigation agent
+
+```powershell
+$jar = 'target/argus-fraud-intelligence-0.1.0-SNAPSHOT.jar'
+java -jar $jar --spring.profiles.active=demo-local --check-investigation-agent=graph --scenario=additional-review
+java -jar $jar --spring.profiles.active=demo-local --check-investigation-agent=behavioral --scenario=additional-review
+```
+
+Each command runs one simulated agent, returns its evidence and validation outcome, and exits. See [Agent Engineering](docs/agent-engineering.md) for the missing-evidence example, the invalid-response example, and the opt-in Azure commands.
+
 ## Project documentation
 
 - [Contributor instructions](AGENTS.md)
 - [Architecture](docs/architecture.md)
 - [Azure integration](docs/azure-integration.md)
 - [Spring AI foundations](docs/spring-ai-foundations.md)
+- [Agent engineering](docs/agent-engineering.md)
+- [Tool Calling](docs/tool-calling.md)
+- [Structured Output](docs/structured-output.md)
 - [Deterministic baseline](docs/deterministic-baseline.md)
 - [API guide](docs/api.md)
 - [Domain model](docs/domain-model.md)
