@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import pe.jconf.argus.assessment.RiskAssessmentService;
+import pe.jconf.argus.domain.Transaction;
 import tools.jackson.databind.JsonNode;
 
 import java.net.URI;
@@ -34,6 +35,12 @@ public class RiskAssessmentController {
     @GetMapping("/scenarios")
     public List<RiskAssessmentService.ScenarioSummary> scenarios() {
         return service.listScenarios();
+    }
+
+    @GetMapping("/scenarios/{scenarioId}")
+    public Transaction scenario(@PathVariable String scenarioId) {
+        return service.scenario(scenarioId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Synthetic scenario not found."));
     }
 
     @PostMapping(path = ASSESSMENTS, consumes = APPLICATION_JSON_VALUE)

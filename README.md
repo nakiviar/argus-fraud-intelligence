@@ -96,3 +96,7 @@ See [Observability demo](docs/observability-demo.md) for startup, the five trace
 - [Domain model](docs/domain-model.md)
 - [Synthetic scenarios](src/main/resources/synthetic/scenarios.json)
 - [Roadmap](docs/roadmap.md)
+
+## Phase 08 dashboard
+
+Run the packaged JAR with demo-local and visit http://127.0.0.1:8080/. See [dashboard guide](docs/dashboard.md) and [conference runbook](docs/dashboard-demo.md).

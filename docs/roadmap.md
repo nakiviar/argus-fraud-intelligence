@@ -12,4 +12,4 @@
 | 07 | Micrometer observations, OpenTelemetry OTLP, Tempo, Grafana Explore and bounded event lookup | Offline tests verify context propagation, privacy and exporter failure. Azure Monitor is a separate proposal. |
 | 08 | Dashboard | Reviewers can inspect decision rationale and evidence while running offline in demo-local. |
 
-Phase 07 delivers local observability and tracing. Dashboard work and cloud provisioning require explicit approval.
+Phase 08 delivers the offline investigation workspace on top of the Phase 07 APIs. Phase 09 and cloud provisioning require explicit approval.

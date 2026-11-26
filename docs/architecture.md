@@ -48,3 +48,7 @@ flowchart LR
 The Investigation Path applies nested monotonic time budgets, a TimeLimiter for each agent, per-agent and deployment semaphore bulkheads, and a shared circuit breaker around model rounds. The protected operation retains its permits until it exits. See [Resilience](resilience.md) and [Containment](containment.md). Micrometer observations correlate application work with Spring AI, and Boot can export sanitized OpenTelemetry spans over OTLP. Investigation events expose a bounded trace lookup separate from the assessment and investigation records. See [Observability](observability.md) and [Distributed tracing](distributed-tracing.md). Both profiles expose the assessment API and health on loopback when running as a web application. Phase 05 implements concurrent orchestration and report aggregation in process. See [Multi-agent orchestration](multi-agent-orchestration.md) and [Investigation lifecycle](investigation-lifecycle.md).
 
 See [Domain model](domain-model.md) for contract ownership and examples.
+
+## Dashboard integration
+
+Spring Boot serves a same-origin static UI. The UI uses the assessment API for the Hot Path, the asynchronous investigation API for REVIEW, and the scoped event history for correlation. It displays the original RiskDecision and visualizes only measured intervals. Runtime metadata exposes the active model mode and safe optional configuration. See [dashboard guide](dashboard.md).

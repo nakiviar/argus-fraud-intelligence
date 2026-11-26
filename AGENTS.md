@@ -12,4 +12,8 @@ ARGUS is an educational proof of concept for JConf Peru 2026. The session is “
 - Use synthetic data exclusively. Never connect to real financial operations or hardcode credentials.
 - Keep demo-local credential-free and offline at runtime. Implement deterministic simulated responses when investigation is in scope. Use the Spring AI 2.0 OpenAI starter with Microsoft Foundry and Azure OpenAI for demo-azure.
 - Use Resilience4j for resilience, Micrometer and OpenTelemetry for observability, Spring Boot-managed JUnit and Mockito for tests, and plain HTML, CSS, and JavaScript for the dashboard.
-- Phase 07 adds opt-in local OTLP tracing and sanitized operational events. Preserve execution and resilience semantics. Keep telemetry attributes bounded and keep raw prompts, provider responses, credentials and tool contents out of telemetry. Run live inference only with explicit authorization. Obtain explicit approval before implementing the dashboard or provisioning cloud resources.
+- Phase 07 adds opt-in local OTLP tracing and sanitized operational events. Preserve execution and resilience semantics. Keep telemetry attributes bounded and keep raw prompts, provider responses, credentials and tool contents out of telemetry. Run live inference only with explicit authorization. Obtain explicit approval before provisioning cloud resources.
+
+## Dashboard constraints
+
+Phase 08 serves the dashboard from Spring Boot static resources. Keep the UI dependency-free and same-origin. Render untrusted values as text and derive outcomes, timestamps, and provenance from backend contracts. Phase 09 requires explicit approval.

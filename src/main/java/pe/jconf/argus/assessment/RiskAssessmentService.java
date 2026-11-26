@@ -48,6 +48,10 @@ public final class RiskAssessmentService {
                 .toList();
     }
 
+    public Optional<Transaction> scenario(String scenarioId) {
+        return catalog.find(scenarioId).map(ScenarioCatalog.Scenario::transaction);
+    }
+
     public Optional<Assessment> assess(String scenarioId) {
         var observation = telemetry.operation("argus.assessment");
         return observation.observe(() -> {

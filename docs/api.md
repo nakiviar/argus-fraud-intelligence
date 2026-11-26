@@ -132,3 +132,8 @@ Example final result for `unavailable-evidence`, with selected fields:
 Request errors use `application/problem+json`. The API returns 400 for invalid input, 404 for unknown IDs, 409 for APPROVE or BLOCK assessments, 429 when both investigation slots are occupied, and 503 when processing is shutting down. The explicit investigation POST can trigger model calls in `demo-azure`. The assessment API and health endpoint remain offline-capable and do not initiate investigations.
 
 Agent deadlines, provider timeouts and containment failures appear in the existing per-agent execution results. A timed-out slot uses TIMEOUT; an open circuit or model bulkhead rejection yields UNAVAILABLE. Report status remains COMPLETED, PARTIAL, or FAILED. The 429 response refers to investigation admission. See [Investigation lifecycle](investigation-lifecycle.md) for status and retention and [Resilience](resilience.md) for the timeout hierarchy.
+
+## Dashboard read-only metadata
+
+- GET /api/v1/scenarios/{scenarioId} returns the synthetic transaction fixture with transactionId, sourceAccountId, destinationAccountId, amount, currency and occurredAt. Unknown fixtures return 404. The list route keeps its two-field response.
+- GET /api/v1/dashboard/runtime returns mode, liveModelVerification, traceExportEnabled, nullable grafanaUrl and nullable simulation. Demo-local may report failureAgent, delayAgent and delay from its startup controls. Demo-azure omits simulation controls. The verification value NOT_RECORDED_IN_THIS_PROCESS means this app has no recorded successful live diagnostic. The export flag describes configuration only.

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>ARGUS · Fraud Intelligence</title>
+<link rel="stylesheet" href="/css/styles.css">
+<script type="module" src="/js/app.js"></script>
+</head>
+<body>
+<aside class="rail">
+  <a class="brand" href="#overview"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M18 2 33 10v16l-15 8L3 26V10Z M7 18q11-12 22 0Q18 30 7 18Z"/><circle cx="18" cy="18" r="4"/></svg><span>ARGUS</span></a>
+  <nav aria-label="Workspace"><a href="#overview"><span aria-hidden="true">◈</span>Overview</a><a href="#assessment"><span aria-hidden="true">▤</span>Transaction Assessment</a><a href="#investigation"><span aria-hidden="true">⌘</span>Multi-Agent Investigation</a><a href="#evidence"><span aria-hidden="true">◇</span>Evidence Explorer</a><a href="#resilience"><span aria-hidden="true">◉</span>Resilience Lab</a><a href="#observability"><span aria-hidden="true">∿</span>Observability</a></nav>
+  <div class="rail-footer">JConf Peru 2026<br><span>Synthetic demonstration</span></div>
+</aside>
+<div class="workspace">
+<header class="top"><span>Multi-Agent Fraud Intelligence Engine</span><div><strong id="mode" class="badge">CONNECTING</strong><span id="verification">Checking runtime</span></div></header>
+<main>
+<section id="overview" class="panel">
+  <div class="heading"><div><p class="eyebrow">ARGUS / OPERATIONS</p><h1>Fraud investigation workspace</h1><p>Agents investigate. Deterministic code decides.</p></div><a class="button" href="#assessment">Assess a transaction <span aria-hidden="true">→</span></a></div>
+  <div class="summary"><article><h3>Risk assessment</h3><strong id="overview-decision">Awaiting assessment</strong><p>Deterministic recommendation</p></article><article><h3>Investigation</h3><strong id="overview-case">Awaiting a REVIEW case</strong><p>Concurrent evidence gathering</p></article><article><h3>Verified references</h3><strong id="overview-evidence">—</strong><p>Investigation evidence</p></article></div>
+  <article class="card"><div class="card-head"><div><h2>Execution architecture</h2><p>Operations update from assessment results and investigation events.</p></div><span class="badge">LIVE STATE</span></div><div id="architecture" class="diagram"></div></article>
+</section>
+<section id="assessment" class="panel" hidden>
+  <div class="heading"><div><p class="eyebrow">DETERMINISTIC HOT PATH</p><h1>Transaction Assessment</h1><p>Run the policy against a predefined synthetic transaction.</p></div></div>
+  <div class="columns"><article class="card"><h2>Synthetic scenario</h2><form id="assessment-form"><label for="scenarios">Scenario</label><select id="scenarios" required disabled></select><div id="transaction"></div><button class="button" id="assess" disabled>Run assessment</button></form></article>
+  <article class="card"><h2>Simulated recommendation</h2><div id="decision"></div><button id="create" class="button" disabled>Start investigation</button></article></div>
+</section>
+<section id="investigation" class="panel" hidden>
+  <div class="heading"><div><p class="eyebrow">INVESTIGATION PATH</p><h1>Multi-Agent Investigation</h1><p>Agent evidence supports review. The original recommendation stays visible.</p></div></div>
+  <form id="lookup" class="inline card"><label for="case-id">Investigation ID</label><input id="case-id" required maxlength="36" placeholder="Enter an investigation UUID"><button class="button secondary">Open investigation</button></form>
+  <article class="card" id="case-summary"></article><div id="agents" class="columns"></div>
+  <article class="card"><h2>Execution waterfall</h2><p>Measured agent intervals and lifecycle timestamps.</p><div id="waterfall" class="diagram"></div></article>
+</section>
+<section id="evidence" class="panel" hidden>
+  <div class="heading"><div><p class="eyebrow">PROVENANCE</p><h1>Evidence Explorer</h1><p>Inspect observations and their verified source references.</p></div></div><div id="evidence-content" class="stack"></div>
+</section>
+<section id="resilience" class="panel" hidden>
+  <div class="heading"><div><p class="eyebrow">CONTAINMENT</p><h1>Resilience Lab</h1><p>Inspect partial results and sanitized failure events.</p></div></div>
+  <article class="card"><h2>Synthetic controls</h2><div id="controls"></div><div id="scenario-shortcuts" class="actions"></div></article><article class="card"><h2>Investigation outcome</h2><div id="resilience-result"></div></article>
+</section>
+<section id="observability" class="panel" hidden>
+  <div class="heading"><div><p class="eyebrow">OPERATIONAL TELEMETRY</p><h1>Observability</h1><p>Correlate application events with a trace when tracing is enabled.</p></div></div>
+  <article class="card"><h2>Trace correlation</h2><div id="trace"></div><div class="actions"><button id="copy" class="button secondary" disabled>Copy trace ID</button><a id="grafana" class="button secondary" hidden target="_blank" rel="noopener noreferrer">Open Grafana ↗</a><button id="retry-events" class="button secondary" disabled>Refresh events</button></div></article>
+  <article class="card"><h2>Investigation events</h2><div id="events"></div></article>
+</section>
+<p id="notice" class="notice" role="status" aria-live="polite" hidden></p>
+</main>
+</div>
+</body>
+</html>
