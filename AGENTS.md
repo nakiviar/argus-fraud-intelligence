@@ -11,5 +11,5 @@ ARGUS is an educational proof of concept for JConf Peru 2026. The session is “
 - Use ChatClient, Tool Calling, and Structured Output for generative agents. Expose least-privilege, read-only tools and validate returned evidence deterministically.
 - Use synthetic data exclusively. Never connect to real financial operations or hardcode credentials.
 - Keep demo-local credential-free and offline at runtime. Implement deterministic simulated responses when investigation is in scope. Use the Spring AI 2.0 OpenAI starter with Microsoft Foundry and Azure OpenAI for demo-azure.
-- Use Resilience4j for resilience, Micrometer and OpenTelemetry for observability, JUnit 5 and Mockito for tests, and plain HTML, CSS, and JavaScript for the dashboard.
-- During Phase 0, limit changes to the build, startup, profile configuration, Actuator, startup tests, and documentation. Obtain explicit approval before starting Phase 1.
+- Use Resilience4j for resilience, Micrometer and OpenTelemetry for observability, Spring Boot-managed JUnit and Mockito for tests, and plain HTML, CSS, and JavaScript for the dashboard.
+- Phase 01 covers foundation corrections, domain contracts, synthetic fixtures, tests, and documentation. Obtain explicit approval before implementing Hot Path decision logic or Investigation Path agents and provider integration.

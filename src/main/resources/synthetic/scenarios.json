@@ -1,0 +1,136 @@
+[
+  {
+    "scenario": "normal",
+    "transaction": {
+      "transactionId": "SYN-TXN-001",
+      "sourceAccountId": "SYN-ACCOUNT-A1",
+      "destinationAccountId": "SYN-ACCOUNT-B1",
+      "amount": 12.30,
+      "currency": "PEN",
+      "occurredAt": "2026-11-26T14:00:00Z"
+    },
+    "expectedDecision": {
+      "transactionId": "SYN-TXN-001",
+      "decision": "APPROVE",
+      "policyVersion": "synthetic-v1",
+      "decidedAt": "2026-11-26T14:00:01Z",
+      "signals": [],
+      "unavailableSources": []
+    },
+    "expectedAgentStatuses": {}
+  },
+  {
+    "scenario": "additional-review",
+    "transaction": {
+      "transactionId": "SYN-TXN-002",
+      "sourceAccountId": "SYN-ACCOUNT-A2",
+      "destinationAccountId": "SYN-ACCOUNT-B2",
+      "amount": 27.50,
+      "currency": "PEN",
+      "occurredAt": "2026-11-26T14:00:00Z"
+    },
+    "expectedDecision": {
+      "transactionId": "SYN-TXN-002",
+      "decision": "REVIEW",
+      "policyVersion": "synthetic-v1",
+      "decidedAt": "2026-11-26T14:00:01Z",
+      "signals": [
+        {
+          "source": "GRAPH_DATA",
+          "code": "FIXTURE_REVIEW",
+          "detail": "Synthetic graph fixture calls for review"
+        }
+      ],
+      "unavailableSources": []
+    },
+    "expectedAgentStatuses": {
+      "GRAPH": "SUCCESS",
+      "BEHAVIORAL": "SUCCESS"
+    }
+  },
+  {
+    "scenario": "mandatory-policy",
+    "transaction": {
+      "transactionId": "SYN-TXN-003",
+      "sourceAccountId": "SYN-ACCOUNT-A3",
+      "destinationAccountId": "SYN-ACCOUNT-B3",
+      "amount": 50.00,
+      "currency": "PEN",
+      "occurredAt": "2026-11-26T14:00:00Z"
+    },
+    "expectedDecision": {
+      "transactionId": "SYN-TXN-003",
+      "decision": "BLOCK",
+      "policyVersion": "synthetic-v1",
+      "decidedAt": "2026-11-26T14:00:01Z",
+      "signals": [
+        {
+          "source": "RULES",
+          "code": "FICTIONAL_POLICY_VIOLATION",
+          "detail": "Fixture is marked as violating the fictional mandatory policy"
+        }
+      ],
+      "unavailableSources": []
+    },
+    "expectedAgentStatuses": {}
+  },
+  {
+    "scenario": "unavailable-evidence",
+    "transaction": {
+      "transactionId": "SYN-TXN-004",
+      "sourceAccountId": "SYN-ACCOUNT-A4",
+      "destinationAccountId": "SYN-ACCOUNT-B4",
+      "amount": 19.00,
+      "currency": "PEN",
+      "occurredAt": "2026-11-26T14:00:00Z"
+    },
+    "expectedDecision": {
+      "transactionId": "SYN-TXN-004",
+      "decision": "REVIEW",
+      "policyVersion": "synthetic-v1",
+      "decidedAt": "2026-11-26T14:00:01Z",
+      "signals": [],
+      "unavailableSources": [
+        "GRAPH_DATA"
+      ]
+    },
+    "expectedAgentStatuses": {
+      "GRAPH": "UNAVAILABLE",
+      "BEHAVIORAL": "SUCCESS"
+    }
+  },
+  {
+    "scenario": "invalid-agent-response",
+    "invalidAgentPayload": {
+      "observation": "Synthetic invalid confidence example",
+      "confidence": 1.25,
+      "citedReferences": []
+    },
+    "transaction": {
+      "transactionId": "SYN-TXN-005",
+      "sourceAccountId": "SYN-ACCOUNT-A5",
+      "destinationAccountId": "SYN-ACCOUNT-B5",
+      "amount": 18.75,
+      "currency": "PEN",
+      "occurredAt": "2026-11-26T14:00:00Z"
+    },
+    "expectedDecision": {
+      "transactionId": "SYN-TXN-005",
+      "decision": "REVIEW",
+      "policyVersion": "synthetic-v1",
+      "decidedAt": "2026-11-26T14:00:01Z",
+      "signals": [
+        {
+          "source": "SYNTHETIC_ML",
+          "code": "FIXTURE_REVIEW",
+          "detail": "Synthetic predictor fixture calls for review"
+        }
+      ],
+      "unavailableSources": []
+    },
+    "expectedAgentStatuses": {
+      "GRAPH": "INVALID_RESPONSE",
+      "BEHAVIORAL": "SUCCESS"
+    }
+  }
+]

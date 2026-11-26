@@ -1,31 +1,42 @@
 # Architecture
 
-ARGUS is a modular monolith shipped as one Spring Boot application. The planned module boundaries are Java packages. Provider adapters depend on investigation contracts, and deterministic policies depend only on domain data and validated evidence.
+ARGUS is a modular monolith shipped as one Spring Boot application. Java package boundaries keep the domain independent of Spring, Spring AI, Azure, and JSON libraries. Phase 01 defines the contracts and fixture cases for two execution paths.
 
-| Component | Responsibility |
+## Hot Path
+
+Assess a synthetic transaction synchronously. The deterministic Rules Engine, graph data provider, and Synthetic ML Predictor supply typed inputs to the Deterministic Risk Decision Engine. The engine emits APPROVE, REVIEW, or BLOCK with the policy version, signals, and explicit unavailable sources. Every input comes from deterministic code or source data. The hot path has zero dependency on an LLM or the Investigation Path.
+
+## Investigation Path
+
+A REVIEW opens an investigation with a snapshot of the transaction and its Hot Path decision. The orchestrator will run the Graph Investigation Agent and Behavioral Investigation Agent concurrently with bounded fan-out/fan-in. Tools will read narrowly scoped synthetic data and the application will record each tool execution. The evidence validator will resolve candidate citations against the recorded results for the current investigation and agent. The orchestrator will report each execution outcome, including timeouts and unavailable evidence.
+
+The report supplies context to a human reviewer. The original decision remains available in the report. Agents have no financial operations or decision override capability. The dashboard will present the decision alongside the report for human review.
+
+```mermaid
+flowchart LR
+    T[Synthetic transaction] --> H[Hot Path]
+    H --> R[Rules, graph data, synthetic predictor]
+    R --> D[Deterministic Risk Decision Engine]
+    D --> O[APPROVE or BLOCK]
+    D --> C[REVIEW investigation context]
+    C --> F[Concurrent investigation orchestrator]
+    F --> G[Graph agent]
+    F --> B[Behavioral agent]
+    G --> V[Evidence validation against tool records]
+    B --> V
+    V --> P[Investigation report]
+    P --> U[Human review]
+```
+
+## Design decisions
+
+| Decision | Reason |
 | --- | --- |
-| Fraud Orchestrator | Run rules and fan out independent investigations concurrently. Gather candidate evidence and track unavailable results. |
-| Deterministic Rules Engine | Evaluate versioned policies against synthetic transactions. |
-| Graph Investigation Agent | Investigate relationships in a synthetic transaction graph. |
-| Behavioral Investigation Agent | Investigate deviations from synthetic behavioral baselines. |
-| Synthetic ML Predictor | Return a reproducible score and model version as evidence inputs. |
-| Evidence Validation Layer | Verify types, fixture references, provenance, and consistency before accepting evidence. |
-| Deterministic Consensus Engine | Apply versioned policy to validated evidence and produce the simulated decision and reasons. |
-| Resilience Layer | Bound investigation latency and concurrency and account for partial failures. |
-| Audit and Observability Layer | Correlate synthetic cases, timings, validation outcomes, policy versions, and decisions. |
-| Fraud Investigation Dashboard | Present investigations, evidence, and decisions using HTML, CSS, and JavaScript. |
+| One deployable with explicit package dependencies | The demo can illustrate separation of concerns without a service network. |
+| Synchronous decision followed by a separate investigation | Model latency and failure stay outside transaction assessment. |
+| Application-owned outcome metadata | Investigations remain attributable when model output is invalid or unavailable. |
+| Explicit availability in both paths | Policy and human reviewers can account for missing inputs without treating missing data as zero risk. |
 
-The planned flow starts with a synthetic transaction and deterministic rule evaluation. The orchestrator fans out investigations and gathers their responses within a deadline. Deterministic validation rejects unsupported evidence. The consensus engine consumes validated evidence, rule findings, and availability information. Agent tools read synthetic data with narrowly scoped access.
+The future resilience layer will bound latency and concurrency. Audit and observability will correlate decisions, investigation reports, and execution outcomes using Micrometer and OpenTelemetry. The existing `demo-local` profile starts offline and exposes health on loopback. The existing `demo-azure` profile supports external Foundry configuration. Implementations of the two paths and provider integration are future work.
 
-## Runtime profiles
-
-- `demo-local` is the default. Phase 0 disables provider models and serves Actuator health on loopback. Later phases will use deterministic fixture responses.
-- `demo-azure` enables OpenAI chat against the Microsoft Foundry deployment supplied through environment variables. Later phases will use ChatClient, Tool Calling, and Structured Output through this adapter.
-
-## References
-
-- [Spring AI compatibility and dependency management](https://docs.spring.io/spring-ai/reference/2.0/getting-started.html)
-- [Spring AI migration notes](https://docs.spring.io/spring-ai/reference/2.0/upgrade-notes.html)
-- [Microsoft Foundry](https://learn.microsoft.com/en-us/azure/foundry/)
-- [Azure Architecture Center](https://learn.microsoft.com/en-us/azure/architecture/)
-- [Resilience4j](https://resilience4j.readme.io/)
+See [Domain model](domain-model.md) for contract ownership and examples.

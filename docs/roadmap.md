@@ -2,9 +2,10 @@
 
 | Phase | Scope | Exit criteria |
 | --- | --- | --- |
-| 0 | Build baseline, profiles, Actuator, startup test, and documentation | Maven test passes and the application starts locally without cloud credentials. |
-| 1 | Typed contracts, synthetic fixtures, rules, predictor, evidence validation, and deterministic consensus | Identical fixtures yield identical decisions and reasons. |
-| 2 | Graph and behavioral investigations, local fixtures and Foundry adapters, concurrent orchestration, and resilience | Both profiles use the same contracts and handle missing, late, or invalid evidence. |
-| 3 | Audit, Micrometer metrics, OpenTelemetry traces, and investigation dashboard | The demo exposes the decision rationale and remains usable offline with demo-local. |
+| 00 | Build baseline, profiles, Actuator, and documentation | Startup and local health work without cloud credentials. |
+| 01 | Foundation corrections, immutable contracts, two-path architecture, fixtures, and tests | Clean Java 21 build passes and fixtures cover both paths. |
+| 02 | Deterministic Hot Path, including rules, graph data, synthetic predictor, and risk decision engine | Identical synthetic inputs yield identical decision outcomes and reasons. Missing inputs are handled explicitly. |
+| 03 | Investigation Path, including local responses, concurrent orchestration, tools, evidence validation, Foundry integration, and resilience | Investigation reports include partial results and preserve the original decision for human review. |
+| 04 | Audit, Micrometer metrics, OpenTelemetry traces, and dashboard | Reviewers can trace decision rationale and inspect evidence while running offline in demo-local. |
 
-Phase 1 requires explicit approval.
+Implementation beyond Phase 01 requires explicit approval.

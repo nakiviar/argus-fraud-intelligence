@@ -2,15 +2,22 @@
 
 **Agents investigate. Deterministic code decides.**
 
-ARGUS is a fictional banking fraud investigation proof of concept for JConf Peru 2026. Phase 0 starts the application and exposes health on localhost. Investigation and deterministic responses enter the project in later phases.
+ARGUS is a fictional banking fraud investigation proof of concept for JConf Peru 2026. Phase 01 defines the domain contracts and synthetic scenarios for two paths. The Hot Path will assess transactions synchronously with deterministic code. The Investigation Path will gather evidence for human review after a REVIEW decision. The current application exposes health on localhost.
 
 ## Prerequisites
 
-Use a Java 21 JDK and Maven 3.9.x. Maven needs access to Maven Central for the first build unless dependencies and plugins are cached.
+Use a Java 21 JDK installed outside the project build directory and Maven 3.9.x. Select the JDK for the current shell. For example, PowerShell can use a persistent JDK installed under the user profile:
+
+```powershell
+$env:JAVA_HOME = "$env:USERPROFILE\.jdks\ms-21.0.8"
+$env:Path = "$env:JAVA_HOME\bin;$env:Path"
+mvn -version
+```
+
+Adjust the path to match your installation. Maven needs access to Maven Central for the first build unless dependencies and plugins are cached.
 
 ```sh
-mvn test
-mvn package
+mvn clean verify
 java -jar target/argus-fraud-intelligence-0.1.0-SNAPSHOT.jar
 ```
 
@@ -30,4 +37,6 @@ Phase 0 configures the chat client. The health endpoint checks application healt
 
 - [Contributor instructions](AGENTS.md)
 - [Architecture](docs/architecture.md)
+- [Domain model](docs/domain-model.md)
+- [Synthetic scenarios](src/main/resources/synthetic/scenarios.json)
 - [Roadmap](docs/roadmap.md)
