@@ -64,6 +64,10 @@ Invoke-RestMethod ($base + [string]$submission.Headers.Location)
 
 The default profile runs both simulated agents. Repeat the GET to retrieve the final report. See [API](docs/api.md) for examples and errors, and [Multi-agent orchestration](docs/multi-agent-orchestration.md) for bounds, failure handling, and the opt-in behavior in `demo-azure`.
 
+## Demonstrate resilience offline
+
+The Investigation Path includes shared model protection, per-agent isolation, and configurable time budgets. Use the local failure controls and scripted checks in [Offline failure scenarios](docs/failure-scenarios.md) to demonstrate partial reports, circuit recovery, and retained permits.
+
 ## Project documentation
 
 - [Contributor instructions](AGENTS.md)
@@ -73,6 +77,9 @@ The default profile runs both simulated agents. Repeat the GET to retrieve the f
 - [Agent engineering](docs/agent-engineering.md)
 - [Multi-agent orchestration](docs/multi-agent-orchestration.md)
 - [Investigation lifecycle](docs/investigation-lifecycle.md)
+- [Resilience](docs/resilience.md)
+- [Containment](docs/containment.md)
+- [Offline failure scenarios](docs/failure-scenarios.md)
 - [Tool Calling](docs/tool-calling.md)
 - [Structured Output](docs/structured-output.md)
 - [Deterministic baseline](docs/deterministic-baseline.md)

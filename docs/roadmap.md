@@ -8,7 +8,8 @@
 | 03 | Isolated Microsoft Foundry model connectivity with offline simulation and an opt-in Entra-authenticated diagnostic | Clean verification exercises the Azure v1 request through a local double. Live verification requires an authorized deployment and explicit invocation. |
 | 04 | Independent Graph and Behavioral agents with scoped read-only tools, structured output, and verified evidence | Each agent runs from the CLI with deterministic simulation or an explicitly invoked model. Scripted model tests verify the Spring AI tool loop. |
 | 05 | Bounded concurrent fan-out/fan-in, deterministic aggregation, async REST API, in-memory lifecycle and events | Reports include partial results and preserve the original decision for human review. |
-| 06 | Advanced resilience policies with Resilience4j | Agent failure and isolation policies are demonstrated without changing the original decision. |
-| 07 | Audit, Micrometer metrics, OpenTelemetry traces, and dashboard | Reviewers can trace decision rationale and inspect evidence while running offline in demo-local. |
+| 06 | Containment and programmatic Resilience4j policies | Offline demonstrations verify deadline gates, circuit recovery, bulkhead isolation, and immutable partial reports. |
+| 07 | Audit, observability exporters, OpenTelemetry and Azure Monitor | Investigations have correlated operational signals. |
+| 08 | Dashboard | Reviewers can inspect decision rationale and evidence while running offline in demo-local. |
 
-Phase 05 delivers concurrent investigations. Advanced resilience, observability exporters, and dashboard work require explicit approval.
+Phase 06 delivers containment and resilience. Observability exporters and dashboard work require explicit approval.

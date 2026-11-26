@@ -33,10 +33,6 @@ final class ExecutionBudget {
         this.agent = agent;
     }
 
-    static ExecutionBudget standalone(UUID investigationId) {
-        return new ExecutionBudget(Duration.ofSeconds(25), System::nanoTime, investigationId, event -> { });
-    }
-
     ExecutionBudget agent(AgentType type, Duration duration) {
         return new ExecutionBudget(duration, clock, investigationId, events, this, type);
     }
@@ -47,6 +43,10 @@ final class ExecutionBudget {
         }
         long remaining = Math.max(0, limit - (clock.getAsLong() - started));
         return parent == null ? remaining : Math.min(remaining, parent.remainingNanos());
+    }
+
+    boolean deadlineReached() {
+        return clock.getAsLong() - started >= limit;
     }
 
     void requireTime() {
@@ -62,6 +62,10 @@ final class ExecutionBudget {
             throw new Expired();
         }
         return Duration.ofMillis(remaining / 1_000_000);
+    }
+
+    AgentType agentType() {
+        return agent;
     }
 
     void close() {

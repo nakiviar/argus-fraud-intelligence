@@ -64,9 +64,11 @@ public final class ScopedTool implements ToolCallback {
             return JSON.writeValueAsString(new Reply(Status.BUDGET_EXCEEDED, null, null));
         }
         if (suppliedContext == null || suppliedContext.getContext().get(SCOPE) != this) {
+            budget.emit(ResilienceEvent.Type.TOOL_REJECTED, Status.WRONG_SCOPE.name());
             return report(new Reply(Status.WRONG_SCOPE, null, null));
         }
         if (!emptyObject(arguments)) {
+            budget.emit(ResilienceEvent.Type.TOOL_REJECTED, Status.INVALID_ARGUMENTS.name());
             return report(new Reply(Status.INVALID_ARGUMENTS, null, null));
         }
 
@@ -77,6 +79,9 @@ public final class ScopedTool implements ToolCallback {
             return report(new Reply(Status.UNAVAILABLE, null, null));
         }
         var source = fact.orElseThrow();
+        if (!source.recordId().matches("synthetic-fixtures-v1/[a-z0-9-]{1,64}/(graph|prediction)")) {
+            throw new IllegalStateException("The provider evidence identity is outside the fixture format.");
+        }
         var reference = new EvidenceReference(UUID.randomUUID(), source.recordId(), type);
         return report(new Reply(Status.AVAILABLE, reference, source.observation()));
     }

@@ -25,7 +25,9 @@ final class ModelRoundAdvisor implements CallAdvisor {
     public ChatClientResponse adviseCall(ChatClientRequest request, CallAdvisorChain chain) {
         return protection.execute(budget, () -> {
             var options = (OpenAiChatOptions) request.prompt().getOptions();
-            var timeout = budget.requestTimeout(httpTimeout);
+            var configured = options.getTimeout();
+            var maximum = configured != null && configured.compareTo(httpTimeout) < 0 ? configured : httpTimeout;
+            var timeout = budget.requestTimeout(maximum);
             var prompt = new Prompt(request.prompt().getInstructions(), options.mutate().timeout(timeout).build());
             return chain.nextCall(request.mutate().prompt(prompt).build());
         });

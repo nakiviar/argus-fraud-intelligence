@@ -120,4 +120,4 @@ Example final result for `unavailable-evidence`, with selected fields:
 
 Request errors use `application/problem+json`. The API returns 400 for invalid input, 404 for unknown IDs, 409 for APPROVE or BLOCK assessments, 429 when both investigation slots are occupied, and 503 when processing is shutting down. The explicit investigation POST can trigger model calls in `demo-azure`. The assessment API and health endpoint remain offline-capable and do not initiate investigations.
 
-See [Investigation lifecycle](investigation-lifecycle.md) for status and retention details.
+Agent deadlines, provider timeouts and containment failures appear in the existing per-agent execution results. A timed-out slot uses TIMEOUT; an open circuit or model bulkhead rejection yields UNAVAILABLE. Report status remains COMPLETED, PARTIAL, or FAILED. The 429 response refers to investigation admission. See [Investigation lifecycle](investigation-lifecycle.md) for status and retention and [Resilience](resilience.md) for the timeout hierarchy.

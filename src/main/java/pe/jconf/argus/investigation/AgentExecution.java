@@ -13,6 +13,7 @@ import tools.jackson.core.JacksonException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -20,15 +21,29 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 final class AgentExecution {
     private final AgentModel model;
     private final InvestigationFixtures fixtures;
+    private final Duration agentTimeout;
+    private final Consumer<ResilienceEvent> events;
     private final EvidenceValidator validator = new EvidenceValidator();
 
     AgentExecution(AgentModel model, InvestigationFixtures fixtures) {
+        this(model, fixtures, Duration.ofSeconds(25), event -> { });
+    }
+
+    AgentExecution(AgentModel model, InvestigationFixtures fixtures, Duration agentTimeout,
+                   Consumer<ResilienceEvent> events) {
         this.model = model;
+        this.agentTimeout = agentTimeout;
+        this.events = events;
         this.fixtures = fixtures;
+    }
+
+    ExecutionBudget standaloneBudget(UUID investigationId, AgentType type) {
+        return new ExecutionBudget(agentTimeout, System::nanoTime, investigationId, events).agent(type, agentTimeout);
     }
 
     AgentDiagnosticResult run(AgentType type, String instructions, ScopedTool tool) {
@@ -45,7 +60,9 @@ final class AgentExecution {
             tool.budget().requireTime();
             finding = model.generate(instructions, tool, fixture);
             tool.budget().requireTime();
-            evidence = validator.validate(finding, tool);
+            var validated = validator.validate(finding, tool);
+            tool.budget().requireTime();
+            evidence = validated;
             status = evidence.isPresent() ? AgentExecutionStatus.SUCCESS : AgentExecutionStatus.UNAVAILABLE;
             validation = evidence.isPresent() ? AgentDiagnosticResult.Validation.VERIFIED
                     : AgentDiagnosticResult.Validation.NO_EVIDENCE;

@@ -28,7 +28,7 @@ final class BehavioralInvestigationAgent implements InvestigationAgent {
 
     @Override
     public AgentDiagnosticResult investigate(InvestigationContext context) {
-        return investigate(context, ExecutionBudget.standalone(context.investigationId()));
+        return investigate(context, execution.standaloneBudget(context.investigationId(), type()));
     }
 
     @Override
@@ -37,7 +37,7 @@ final class BehavioralInvestigationAgent implements InvestigationAgent {
     }
 
     ScopedTool behavioralTool(InvestigationContext context) {
-        return behavioralTool(context, ExecutionBudget.standalone(context.investigationId()));
+        return behavioralTool(context, execution.standaloneBudget(context.investigationId(), type()));
     }
 
     private ScopedTool behavioralTool(InvestigationContext context, ExecutionBudget budget) {

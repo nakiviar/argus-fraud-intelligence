@@ -25,7 +25,7 @@ final class GraphInvestigationAgent implements InvestigationAgent {
 
     @Override
     public AgentDiagnosticResult investigate(InvestigationContext context) {
-        return investigate(context, ExecutionBudget.standalone(context.investigationId()));
+        return investigate(context, execution.standaloneBudget(context.investigationId(), type()));
     }
 
     @Override
@@ -34,14 +34,16 @@ final class GraphInvestigationAgent implements InvestigationAgent {
     }
 
     ScopedTool graphTool(InvestigationContext context) {
-        return graphTool(context, ExecutionBudget.standalone(context.investigationId()));
+        return graphTool(context, execution.standaloneBudget(context.investigationId(), type()));
     }
 
     private ScopedTool graphTool(InvestigationContext context, ExecutionBudget budget) {
         var transaction = context.transaction();
         return new ScopedTool("read_graph_relationship", "Read the current fictional account relationship. Input: {}.",
                 context, budget, EvidenceType.GRAPH, () -> graph.findEvidence(transaction).map(result -> {
-                    if (!result.transactionId().equals(transaction.transactionId())) {
+                    if (!result.transactionId().equals(transaction.transactionId())
+                            || !transaction.sourceAccountId().matches("SYN-ACCOUNT-[A-Z0-9-]{1,48}")
+                            || !transaction.destinationAccountId().matches("SYN-ACCOUNT-[A-Z0-9-]{1,48}")) {
                         throw new IllegalStateException("Graph result is outside the scoped transaction.");
                     }
                     return new ScopedTool.Fact(result.recordId(), "The graph fixture links synthetic accounts "

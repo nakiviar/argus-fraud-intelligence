@@ -37,8 +37,9 @@ class InvestigationConfiguration {
     }
 
     @Bean
-    AgentExecution agentExecution(AgentModel model, InvestigationFixtures fixtures) {
-        return new AgentExecution(model, fixtures);
+    AgentExecution agentExecution(AgentModel model, InvestigationFixtures fixtures, InvestigationBudgets budgets,
+                                  ApplicationEventPublisher events) {
+        return new AgentExecution(model, fixtures, budgets.agent(), events::publishEvent);
     }
 
     @Bean

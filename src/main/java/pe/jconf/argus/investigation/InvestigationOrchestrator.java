@@ -128,30 +128,35 @@ final class InvestigationOrchestrator implements AutoCloseable {
             work.forEach(AgentWork::interrupt);
         }, global.remainingNanos(), TimeUnit.NANOSECONDS);
         var tasks = new ArrayList<CompletableFuture<Void>>();
+        var views = new ArrayList<CompletableFuture<Void>>();
         for (var job : work) {
             try {
                 long waitNanos = Math.max(1, job.budget.remainingNanos());
                 var actual = CompletableFuture.runAsync(() -> runAgent(context, job), workers);
                 tasks.add(actual);
-                var limiter = TimeLimiter.of(TimeLimiterConfig.custom().timeoutDuration(Duration.ofNanos(waitNanos))
+                var limiter = TimeLimiter.of(TimeLimiterConfig.custom().timeoutDuration(Duration.ofMillis(1 + (waitNanos - 1) / 1_000_000))
                         .cancelRunningFuture(false).build());
                 // The limiter owns a copy. Admission remains occupied until the actual work exits.
-                limiter.executeCompletionStage(deadlines, actual::copy).whenComplete((ignored, failure) -> {
-                    if (failure instanceof java.util.concurrent.TimeoutException) {
+                var view = limiter.executeCompletionStage(deadlines, () -> actual.handle((value, error) -> (Void) null))
+                        .whenComplete((ignored, failure) -> {
+                    var cause = failure instanceof java.util.concurrent.CompletionException wrapped
+                            ? wrapped.getCause() : failure;
+                    if (cause instanceof java.util.concurrent.TimeoutException) {
                         job.budget.close();
-                        publish(context, job, failure(context, job.type, AgentExecutionStatus.TIMEOUT));
+                        publish(context, job, failure(context, job.type, AgentExecutionStatus.TIMEOUT), false);
                         job.interrupt();
                     }
                 });
+                views.add(view.toCompletableFuture());
             } catch (RejectedExecutionException exception) {
                 job.budget.emit(ResilienceEvent.Type.BULKHEAD_REJECTED, "WORKER_REJECTED");
                 publish(context, job, failed(context, job.type));
             }
         }
-        CompletableFuture.allOf(tasks.toArray(CompletableFuture[]::new)).whenComplete((ignored, failure) -> {
+        var published = CompletableFuture.allOf(views.toArray(CompletableFuture[]::new)).whenComplete((ignored, failure) -> {
             try {
                 timer.cancel(false);
-                if (global.remainingNanos() == 0) {
+                if (global.deadlineReached()) {
                     if (fanIn(context, AgentExecutionStatus.TIMEOUT)) {
                         global.emit(ResilienceEvent.Type.INVESTIGATION_DEADLINE_EXCEEDED, "TIMEOUT");
                         global.emit(ResilienceEvent.Type.FALLBACK, "GLOBAL_DEADLINE");
@@ -161,9 +166,12 @@ final class InvestigationOrchestrator implements AutoCloseable {
                 }
             } finally {
                 global.close();
-                active.remove(context.investigationId());
-                slots.release();
             }
+        });
+        tasks.add(published);
+        CompletableFuture.allOf(tasks.toArray(CompletableFuture[]::new)).whenComplete((ignored, failure) -> {
+            active.remove(context.investigationId());
+            slots.release();
         });
     }
 
@@ -192,18 +200,26 @@ final class InvestigationOrchestrator implements AutoCloseable {
             } catch (RuntimeException exception) {
                 result = failed(context, job.type);
             }
-            if (job.budget.remainingNanos() == 0 && result.status() != AgentExecutionStatus.TIMEOUT) {
+            boolean expiredResult = job.budget.remainingNanos() == 0 && result.status() != AgentExecutionStatus.TIMEOUT;
+            if (expiredResult) {
                 job.budget.emit(ResilienceEvent.Type.LATE_RESULT_DISCARDED, result.status().name());
                 result = failure(context, job.type, AgentExecutionStatus.TIMEOUT);
             }
-            publish(context, job, result);
+            publish(context, job, result, !expiredResult);
         } finally {
             job.exit();
         }
     }
 
     private void publish(InvestigationContext context, AgentWork job, AgentExecutionResult result) {
+        publish(context, job, result, true);
+    }
+
+    private void publish(InvestigationContext context, AgentWork job, AgentExecutionResult result, boolean reportLate) {
         if (!repository.agentFinished(context.investigationId(), result)) {
+            if (!reportLate) {
+                return;
+            }
             job.budget.emit(ResilienceEvent.Type.LATE_RESULT_DISCARDED, result.status().name());
         } else if (result.status() != AgentExecutionStatus.SUCCESS) {
             if (result.status() == AgentExecutionStatus.TIMEOUT) {
