@@ -1,5 +1,6 @@
 package pe.jconf.argus.investigation;
 
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -10,6 +11,7 @@ import pe.jconf.argus.assessment.GraphDataProvider;
 import pe.jconf.argus.assessment.MlPredictor;
 import pe.jconf.argus.assessment.RiskAssessmentService;
 import pe.jconf.argus.domain.AgentType;
+import pe.jconf.argus.observability.ArgusTelemetry;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
@@ -26,20 +28,21 @@ class InvestigationConfiguration {
 
     @Bean
     @Profile("demo-local & !demo-azure")
-    AgentModel simulatedAgentModel() {
-        return new SimulatedAgentModel();
+    AgentModel simulatedAgentModel(ArgusTelemetry telemetry) {
+        return new SimulatedAgentModel(telemetry);
     }
 
     @Bean
     @Profile("demo-azure & !demo-local")
-    AgentModel springAiAgentModel(ChatClient foundryChatClient, RemoteModelProtection protection, InvestigationBudgets budgets) {
-        return new SpringAiAgentModel(foundryChatClient, protection, budgets.http());
+    AgentModel springAiAgentModel(ChatClient foundryChatClient, RemoteModelProtection protection, InvestigationBudgets budgets,
+                                  ObservationRegistry observations) {
+        return new SpringAiAgentModel(foundryChatClient, protection, budgets.http(), observations);
     }
 
     @Bean
     AgentExecution agentExecution(AgentModel model, InvestigationFixtures fixtures, InvestigationBudgets budgets,
-                                  ApplicationEventPublisher events) {
-        return new AgentExecution(model, fixtures, budgets.agent(), events::publishEvent);
+                                  ApplicationEventPublisher events, ArgusTelemetry telemetry) {
+        return new AgentExecution(model, fixtures, budgets.agent(), events::publishEvent, telemetry);
     }
 
     @Bean
@@ -69,6 +72,7 @@ class InvestigationConfiguration {
     @Bean(destroyMethod = "close")
     InvestigationOrchestrator investigationOrchestrator(RiskAssessmentService assessments, InvestigationFixtures fixtures,
             List<InvestigationAgent> agents, AgentModel model, InvestigationBudgets budgets, ApplicationEventPublisher events,
+            ArgusTelemetry telemetry,
             @Value("${argus.investigation.simulated-failure:}") String simulatedFailure,
             @Value("${argus.investigation.simulated-delay-agent:}") String simulatedDelayAgent,
             @Value("${argus.investigation.simulated-delay:PT0S}") String simulatedDelay) {
@@ -76,7 +80,7 @@ class InvestigationConfiguration {
                 ? AgentType.valueOf(simulatedFailure) : null;
         AgentType delayAgent = model.mode() == AgentDiagnosticResult.Mode.SIMULATED && !simulatedDelayAgent.isBlank()
                 ? AgentType.valueOf(simulatedDelayAgent) : null;
-        return new InvestigationOrchestrator(new InvestigationRepository(), assessments, fixtures, agents, model.mode(),
-                failure, budgets, events::publishEvent, delayAgent, delayAgent == null ? Duration.ZERO : Duration.parse(simulatedDelay));
+        return new InvestigationOrchestrator(new InvestigationRepository(telemetry::lifecycle), assessments, fixtures, agents, model.mode(),
+                failure, budgets, events::publishEvent, delayAgent, delayAgent == null ? Duration.ZERO : Duration.parse(simulatedDelay), telemetry);
     }
 }

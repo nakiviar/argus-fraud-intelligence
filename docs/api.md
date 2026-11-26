@@ -60,6 +60,17 @@ The API returns `application/problem+json` for request errors. A malformed body,
 ```
 
 
+## Investigation telemetry
+
+GET `/api/v1/investigations/{investigationId}/events` returns 200 with the retained sanitized lifecycle and resilience events for the requested case. Invalid UUIDs return 400 and unknown investigations return 404. A known case can return an empty array after eviction. Trace and span IDs can be null. Trace availability in an exporter depends on sampling, exporter configuration and retention.
+
+```powershell
+$events = Invoke-RestMethod "$base/api/v1/investigations/$($investigation.investigationId)/events"
+$events | Select-Object eventType,agent,executionStatus,traceId,spanId
+```
+
+The endpoint stores at most 512 recent events across the process. It serves local diagnostics and has no streaming behavior. See [Observability](observability.md).
+
 ## Asynchronous investigations
 
 | Method and path | Success | Purpose |

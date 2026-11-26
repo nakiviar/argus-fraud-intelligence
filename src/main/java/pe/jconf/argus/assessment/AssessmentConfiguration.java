@@ -2,6 +2,7 @@ package pe.jconf.argus.assessment;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pe.jconf.argus.observability.ArgusTelemetry;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
@@ -31,8 +32,8 @@ class AssessmentConfiguration {
 
     @Bean
     RiskAssessmentService riskAssessmentService(ScenarioCatalog catalog, GraphDataProvider graph,
-                                                MlPredictor predictor, AuditRecorder audit) {
+                                                MlPredictor predictor, AuditRecorder audit, ArgusTelemetry telemetry) {
         return new RiskAssessmentService(catalog, new RulesEngine(), graph, predictor, new RiskDecisionEngine(),
-                audit, Clock.systemUTC());
+                audit, Clock.systemUTC(), telemetry);
     }
 }

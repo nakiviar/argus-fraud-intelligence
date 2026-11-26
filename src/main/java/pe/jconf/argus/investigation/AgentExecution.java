@@ -8,6 +8,7 @@ import pe.jconf.argus.domain.AgentExecutionResult;
 import pe.jconf.argus.domain.AgentExecutionStatus;
 import pe.jconf.argus.domain.AgentType;
 import pe.jconf.argus.domain.EvidenceReference;
+import pe.jconf.argus.observability.ArgusTelemetry;
 import tools.jackson.core.JacksonException;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ final class AgentExecution {
     private final InvestigationFixtures fixtures;
     private final Duration agentTimeout;
     private final Consumer<ResilienceEvent> events;
+    private final ArgusTelemetry telemetry;
     private final EvidenceValidator validator = new EvidenceValidator();
 
     AgentExecution(AgentModel model, InvestigationFixtures fixtures) {
@@ -36,6 +38,12 @@ final class AgentExecution {
 
     AgentExecution(AgentModel model, InvestigationFixtures fixtures, Duration agentTimeout,
                    Consumer<ResilienceEvent> events) {
+        this(model, fixtures, agentTimeout, events, ArgusTelemetry.noop());
+    }
+
+    AgentExecution(AgentModel model, InvestigationFixtures fixtures, Duration agentTimeout,
+                   Consumer<ResilienceEvent> events, ArgusTelemetry telemetry) {
+        this.telemetry = telemetry;
         this.model = model;
         this.agentTimeout = agentTimeout;
         this.events = events;
@@ -60,7 +68,10 @@ final class AgentExecution {
             tool.budget().requireTime();
             finding = model.generate(instructions, tool, fixture);
             tool.budget().requireTime();
-            var validated = validator.validate(finding, tool);
+            var candidate = finding;
+            var validated = telemetry.operation("argus.evidence.validation")
+                    .lowCardinalityKeyValue("agent", type.name()).lowCardinalityKeyValue("mode", model.mode().name())
+                    .observe(() -> validator.validate(candidate, tool));
             tool.budget().requireTime();
             evidence = validated;
             status = evidence.isPresent() ? AgentExecutionStatus.SUCCESS : AgentExecutionStatus.UNAVAILABLE;

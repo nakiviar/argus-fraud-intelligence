@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static pe.jconf.argus.investigation.InvestigationEvent.Type.*;
 
@@ -23,12 +25,22 @@ final class InvestigationRepository {
     private final Map<UUID, Entry> byId = new HashMap<>();
     private final Map<UUID, UUID> byAssessment = new HashMap<>();
 
+    private final BiConsumer<InvestigationEvent, AgentDiagnosticResult.Mode> telemetry;
+
+    InvestigationRepository() {
+        this((event, mode) -> { });
+    }
+
+    InvestigationRepository(BiConsumer<InvestigationEvent, AgentDiagnosticResult.Mode> telemetry) {
+        this.telemetry = telemetry;
+    }
+
     synchronized InvestigationSnapshot register(UUID assessmentId, InvestigationContext context,
                                                  AgentDiagnosticResult.Mode mode) {
         if (byId.containsKey(context.investigationId()) || byAssessment.containsKey(assessmentId)) {
             throw new IllegalStateException("Investigation or assessment already registered.");
         }
-        var entry = new Entry(assessmentId, context, mode);
+        var entry = new Entry(assessmentId, context, mode, event -> telemetry.accept(event, mode));
         byId.put(context.investigationId(), entry);
         byAssessment.put(assessmentId, context.investigationId());
         entry.event(INVESTIGATION_CREATED, null, null, null);
@@ -105,6 +117,7 @@ final class InvestigationRepository {
 
     private static final class Entry {
         private final UUID assessmentId;
+        private final Consumer<InvestigationEvent> telemetry;
         private final InvestigationContext context;
         private final AgentDiagnosticResult.Mode mode;
         private final Map<AgentType, Instant> started = new EnumMap<>(AgentType.class);
@@ -115,7 +128,9 @@ final class InvestigationRepository {
         private InvestigationReport report;
         private List<EvidenceReference> references = List.of();
 
-        private Entry(UUID assessmentId, InvestigationContext context, AgentDiagnosticResult.Mode mode) {
+        private Entry(UUID assessmentId, InvestigationContext context, AgentDiagnosticResult.Mode mode,
+                      Consumer<InvestigationEvent> telemetry) {
+            this.telemetry = telemetry;
             this.assessmentId = assessmentId;
             this.context = context;
             this.mode = mode;
@@ -146,8 +161,10 @@ final class InvestigationRepository {
         private Instant event(InvestigationEvent.Type type, AgentType agent, UUID executionId,
                               AgentExecutionStatus executionStatus) {
             var instant = now();
-            events.add(new InvestigationEvent(context.investigationId(), type, agent, executionId, executionStatus,
-                    status, instant));
+            var event = new InvestigationEvent(context.investigationId(), type, agent, executionId, executionStatus,
+                    status, instant);
+            events.add(event);
+            telemetry.accept(event);
             return instant;
         }
 

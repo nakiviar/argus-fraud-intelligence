@@ -2,12 +2,14 @@ package pe.jconf.argus.investigation;
 
 import io.github.resilience4j.timelimiter.TimeLimiter;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
+import io.micrometer.observation.Observation;
 import pe.jconf.argus.assessment.RiskAssessmentService;
 import pe.jconf.argus.domain.AgentExecutionResult;
 import pe.jconf.argus.domain.AgentExecutionStatus;
 import pe.jconf.argus.domain.AgentType;
 import pe.jconf.argus.domain.Decision;
 import pe.jconf.argus.domain.InvestigationContext;
+import pe.jconf.argus.observability.ArgusTelemetry;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -42,6 +44,8 @@ final class InvestigationOrchestrator implements AutoCloseable {
     private final Consumer<ResilienceEvent> events;
     private final AgentType delayAgent;
     private final Duration delay;
+    private final ArgusTelemetry telemetry;
+    private final Map<UUID, Observation> investigationObservations = new ConcurrentHashMap<>();
     private final Map<UUID, ExecutionBudget> active = new ConcurrentHashMap<>();
     private final Semaphore slots = new Semaphore(MAX_IN_FLIGHT);
     private final ThreadPoolExecutor workers = new ThreadPoolExecutor(WORKERS, WORKERS, 0, TimeUnit.MILLISECONDS,
@@ -62,6 +66,16 @@ final class InvestigationOrchestrator implements AutoCloseable {
                                 AgentDiagnosticResult.Mode mode, AgentType simulatedFailure,
                                 InvestigationBudgets budgets, Consumer<ResilienceEvent> events,
                                 AgentType delayAgent, Duration delay) {
+        this(repository, assessments, fixtures, agents, mode, simulatedFailure, budgets, events, delayAgent, delay,
+                ArgusTelemetry.noop());
+    }
+
+    InvestigationOrchestrator(InvestigationRepository repository, RiskAssessmentService assessments,
+                                InvestigationFixtures fixtures, List<InvestigationAgent> agents,
+                                AgentDiagnosticResult.Mode mode, AgentType simulatedFailure,
+                                InvestigationBudgets budgets, Consumer<ResilienceEvent> events,
+                                AgentType delayAgent, Duration delay, ArgusTelemetry telemetry) {
+        this.telemetry = telemetry;
         this.repository = repository;
         this.assessments = assessments;
         this.fixtures = fixtures;
@@ -85,6 +99,11 @@ final class InvestigationOrchestrator implements AutoCloseable {
     }
 
     synchronized Submission start(UUID assessmentId) {
+        return telemetry.operation("argus.investigation.create").lowCardinalityKeyValue("mode", mode.name())
+                .observe(() -> registerAndStart(assessmentId));
+    }
+
+    private Submission registerAndStart(UUID assessmentId) {
         var existing = repository.findByAssessment(assessmentId);
         if (existing.isPresent()) {
             return new Submission(existing.orElseThrow(), false);
@@ -96,43 +115,47 @@ final class InvestigationOrchestrator implements AutoCloseable {
         if (closed || !slots.tryAcquire()) {
             throw new Rejected(closed ? Rejection.SHUTTING_DOWN : Rejection.CAPACITY);
         }
-        InvestigationSnapshot pending;
-        InvestigationContext context;
-        try {
-            context = fixtures.authorize(assessment.riskDecision());
-            pending = repository.register(assessmentId, context, mode);
+        var observation = telemetry.operation("argus.investigation").lowCardinalityKeyValue("mode", mode.name())
+                .start();
+        try (var scope = observation.openScope()) {
+            telemetry.linkAssessment(assessmentId);
+            var context = fixtures.authorize(assessment.riskDecision());
+            var pending = repository.register(assessmentId, context, mode);
+            var budget = new ExecutionBudget(budgets.global(), System::nanoTime, context.investigationId(), events);
+            active.put(context.investigationId(), budget);
+            investigationObservations.put(context.investigationId(), observation);
+            repository.start(context.investigationId());
+            fanOut(context, budget, observation);
+            return new Submission(pending, true);
         } catch (RuntimeException exception) {
+            observation.error(exception);
+            observation.stop();
             slots.release();
             throw exception;
         }
-        var budget = new ExecutionBudget(budgets.global(), System::nanoTime, context.investigationId(), events);
-        active.put(context.investigationId(), budget);
-        repository.start(context.investigationId());
-        fanOut(context, budget);
-        return new Submission(pending, true);
     }
 
     Optional<InvestigationSnapshot> find(UUID id) {
         return repository.find(id);
     }
 
-    private void fanOut(InvestigationContext context, ExecutionBudget global) {
+    private void fanOut(InvestigationContext context, ExecutionBudget global, Observation observation) {
         var work = java.util.Arrays.stream(AgentType.values())
                 .map(type -> new AgentWork(type, global.agent(type, budgets.agent()))).toList();
-        var timer = deadlines.schedule(() -> {
+        var timer = deadlines.schedule(() -> inScope(observation, () -> {
             global.close();
             if (fanIn(context, AgentExecutionStatus.TIMEOUT)) {
                 global.emit(ResilienceEvent.Type.INVESTIGATION_DEADLINE_EXCEEDED, "TIMEOUT");
                 global.emit(ResilienceEvent.Type.FALLBACK, "GLOBAL_DEADLINE");
             }
             work.forEach(AgentWork::interrupt);
-        }, global.remainingNanos(), TimeUnit.NANOSECONDS);
+        }), global.remainingNanos(), TimeUnit.NANOSECONDS);
         var tasks = new ArrayList<CompletableFuture<Void>>();
         var views = new ArrayList<CompletableFuture<Void>>();
         for (var job : work) {
             try {
                 long waitNanos = Math.max(1, job.budget.remainingNanos());
-                var actual = CompletableFuture.runAsync(() -> runAgent(context, job), workers);
+                var actual = CompletableFuture.runAsync(() -> inScope(observation, () -> runAgent(context, job)), workers);
                 tasks.add(actual);
                 var limiter = TimeLimiter.of(TimeLimiterConfig.custom().timeoutDuration(Duration.ofMillis(1 + (waitNanos - 1) / 1_000_000))
                         .cancelRunningFuture(false).build());
@@ -142,9 +165,11 @@ final class InvestigationOrchestrator implements AutoCloseable {
                     var cause = failure instanceof java.util.concurrent.CompletionException wrapped
                             ? wrapped.getCause() : failure;
                     if (cause instanceof java.util.concurrent.TimeoutException) {
-                        job.budget.close();
-                        publish(context, job, failure(context, job.type, AgentExecutionStatus.TIMEOUT), false);
-                        job.interrupt();
+                        inScope(observation, () -> {
+                            job.budget.close();
+                            publish(context, job, failure(context, job.type, AgentExecutionStatus.TIMEOUT), false);
+                            job.interrupt();
+                        });
                     }
                 });
                 views.add(view.toCompletableFuture());
@@ -153,7 +178,7 @@ final class InvestigationOrchestrator implements AutoCloseable {
                 publish(context, job, failed(context, job.type));
             }
         }
-        var published = CompletableFuture.allOf(views.toArray(CompletableFuture[]::new)).whenComplete((ignored, failure) -> {
+        var published = CompletableFuture.allOf(views.toArray(CompletableFuture[]::new)).whenComplete((ignored, failure) -> inScope(observation, () -> {
             try {
                 timer.cancel(false);
                 if (global.deadlineReached()) {
@@ -167,15 +192,29 @@ final class InvestigationOrchestrator implements AutoCloseable {
             } finally {
                 global.close();
             }
-        });
+        }));
         tasks.add(published);
         CompletableFuture.allOf(tasks.toArray(CompletableFuture[]::new)).whenComplete((ignored, failure) -> {
             active.remove(context.investigationId());
+            investigationObservations.remove(context.investigationId());
             slots.release();
         });
     }
 
     private void runAgent(InvestigationContext context, AgentWork job) {
+        var observation = telemetry.operation("argus.agent").lowCardinalityKeyValue("agent", job.type.name())
+                .lowCardinalityKeyValue("mode", mode.name())
+                .lowCardinalityKeyValue("token.usage", mode == AgentDiagnosticResult.Mode.SIMULATED
+                        ? "unavailable" : "see.model")
+                .start();
+        try (var scope = observation.openScope()) {
+            executeAgent(context, job, observation);
+        } finally {
+            observation.stop();
+        }
+    }
+
+    private void executeAgent(InvestigationContext context, AgentWork job, Observation observation) {
         job.enter();
         try {
             if (!repository.agentStarted(context.investigationId(), job.type)) {
@@ -205,6 +244,8 @@ final class InvestigationOrchestrator implements AutoCloseable {
                 job.budget.emit(ResilienceEvent.Type.LATE_RESULT_DISCARDED, result.status().name());
                 result = failure(context, job.type, AgentExecutionStatus.TIMEOUT);
             }
+            observation.lowCardinalityKeyValue("status", result.status().name())
+                    .lowCardinalityKeyValue("late", Boolean.toString(job.budget.remainingNanos() == 0));
             publish(context, job, result, !expiredResult);
         } finally {
             job.exit();
@@ -221,7 +262,10 @@ final class InvestigationOrchestrator implements AutoCloseable {
                 return;
             }
             job.budget.emit(ResilienceEvent.Type.LATE_RESULT_DISCARDED, result.status().name());
-        } else if (result.status() != AgentExecutionStatus.SUCCESS) {
+        } else {
+            if (result.status() == AgentExecutionStatus.SUCCESS) {
+                return;
+            }
             if (result.status() == AgentExecutionStatus.TIMEOUT) {
                 job.budget.emit(ResilienceEvent.Type.AGENT_TIMEOUT, "TIMEOUT");
             }
@@ -282,10 +326,25 @@ final class InvestigationOrchestrator implements AutoCloseable {
     }
 
     private boolean fanIn(InvestigationContext context, AgentExecutionStatus missingStatus) {
-        var results = repository.beginAggregation(context.investigationId(), missingStatus);
-        results.ifPresent(values ->
-                repository.complete(context.investigationId(), aggregator.aggregate(context, values, Instant.now())));
-        return results.isPresent();
+        var observation = investigationObservations.getOrDefault(context.investigationId(), Observation.NOOP);
+        try (var scope = observation.openScope()) {
+            var results = repository.beginAggregation(context.investigationId(), missingStatus);
+            results.ifPresent(values -> {
+                var aggregate = telemetry.operation("argus.evidence.aggregation").lowCardinalityKeyValue("mode", mode.name())
+                        .observe(() -> aggregator.aggregate(context, values, Instant.now()));
+                telemetry.operation("argus.investigation.completion").lowCardinalityKeyValue("mode", mode.name())
+                        .lowCardinalityKeyValue("status", aggregate.status().name())
+                        .observe(() -> repository.complete(context.investigationId(), aggregate));
+                observation.lowCardinalityKeyValue("status", aggregate.status().name()).stop();
+            });
+            return results.isPresent();
+        }
+    }
+
+    private static void inScope(Observation observation, Runnable action) {
+        try (var scope = observation.openScope()) {
+            action.run();
+        }
     }
     @Override
     public void close() {

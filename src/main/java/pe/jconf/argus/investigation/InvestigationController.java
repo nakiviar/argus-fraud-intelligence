@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import pe.jconf.argus.observability.ArgusTelemetry;
 import tools.jackson.databind.JsonNode;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -24,7 +26,10 @@ class InvestigationController {
     static final String PATH = "/api/v1/investigations";
     private final InvestigationOrchestrator orchestrator;
 
-    InvestigationController(InvestigationOrchestrator orchestrator) {
+    private final ArgusTelemetry telemetry;
+
+    InvestigationController(InvestigationOrchestrator orchestrator, ArgusTelemetry telemetry) {
+        this.telemetry = telemetry;
         this.orchestrator = orchestrator;
     }
 
@@ -59,6 +64,12 @@ class InvestigationController {
         var id = parseUuid(investigationId, "Investigation identifier must be a UUID.");
         return orchestrator.find(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Investigation not found."));
+    }
+
+    @GetMapping("/{investigationId}/events")
+    List<ArgusTelemetry.Event> events(@PathVariable String investigationId) {
+        var snapshot = get(investigationId);
+        return telemetry.events(snapshot.investigationId());
     }
 
     private static UUID parseUuid(String value, String detail) {

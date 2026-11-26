@@ -9,7 +9,7 @@
 | 04 | Independent Graph and Behavioral agents with scoped read-only tools, structured output, and verified evidence | Each agent runs from the CLI with deterministic simulation or an explicitly invoked model. Scripted model tests verify the Spring AI tool loop. |
 | 05 | Bounded concurrent fan-out/fan-in, deterministic aggregation, async REST API, in-memory lifecycle and events | Reports include partial results and preserve the original decision for human review. |
 | 06 | Containment and programmatic Resilience4j policies | Offline demonstrations verify deadline gates, circuit recovery, bulkhead isolation, and immutable partial reports. |
-| 07 | Audit, observability exporters, OpenTelemetry and Azure Monitor | Investigations have correlated operational signals. |
+| 07 | Micrometer observations, OpenTelemetry OTLP, Tempo, Grafana Explore and bounded event lookup | Offline tests verify context propagation, privacy and exporter failure. Azure Monitor is a separate proposal. |
 | 08 | Dashboard | Reviewers can inspect decision rationale and evidence while running offline in demo-local. |
 
-Phase 06 delivers containment and resilience. Observability exporters and dashboard work require explicit approval.
+Phase 07 delivers local observability and tracing. Dashboard work and cloud provisioning require explicit approval.

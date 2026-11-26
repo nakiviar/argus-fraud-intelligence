@@ -1,6 +1,9 @@
 package pe.jconf.argus.ai;
 
 import com.sun.net.httpserver.HttpServer;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationHandler;
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -120,6 +123,31 @@ class FoundryConnectivityTests {
         assertFalse(result.connected());
         assertEquals(ErrorCategory.CONNECTION, result.errorCategory());
         assertNull(result.response());
+    }
+
+    @Test
+    void observesOneSpringAiChatClientAndModelCallThroughTheLoopbackTransport() {
+        var registry = ObservationRegistry.create();
+        var stops = new java.util.ArrayList<String>();
+        registry.observationConfig().observationHandler(new ObservationHandler<Observation.Context>() {
+            @Override
+            public boolean supportsContext(Observation.Context context) {
+                return true;
+            }
+
+            @Override
+            public void onStop(Observation.Context context) {
+                stops.add(context.getName());
+            }
+        });
+        var baseUrl = URI.create("http://127.0.0.1:" + server.getAddress().getPort() + "/openai/v1");
+        var settings = new FoundrySettings(baseUrl, FIXTURE_DEPLOYMENT, TIMEOUT, 0, 64);
+        var client = FoundryConnectivityConfiguration.chatClient(settings, transport, FIXTURE_TOKEN, registry);
+
+        assertTrue(new AzureModelConnectivityService(client, FIXTURE_DEPLOYMENT).check().connected());
+        assertEquals(1, stops.stream().filter("spring.ai.chat.client"::equals).count());
+        assertEquals(1, stops.stream().filter("gen_ai.client.operation"::equals).count());
+        assertEquals(1, calls.get());
     }
 
     private void expectFailure(int status, ErrorCategory category) {

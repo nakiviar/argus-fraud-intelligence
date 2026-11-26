@@ -5,6 +5,7 @@ import com.openai.client.OpenAIClientAsyncImpl;
 import com.openai.client.OpenAIClientImpl;
 import com.openai.core.ClientOptions;
 import com.openai.credential.BearerTokenCredential;
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
@@ -28,15 +29,21 @@ class FoundryConnectivityConfiguration {
     }
 
     @Bean
-    ChatClient foundryChatClient(FoundrySettings settings, SpringAiOpenAiHttpClient transport, Environment environment) {
+    ChatClient foundryChatClient(FoundrySettings settings, SpringAiOpenAiHttpClient transport,
+                                Environment environment, ObservationRegistry observations) {
         var accessToken = environment.getProperty("AZURE_OPENAI_ACCESS_TOKEN", "");
         if (!accessToken.matches("[!-~]+")) {
             throw new FoundrySettings.ConfigurationException("Set AZURE_OPENAI_ACCESS_TOKEN to a short-lived Entra token.");
         }
-        return chatClient(settings, transport, accessToken);
+        return chatClient(settings, transport, accessToken, observations);
     }
 
     static ChatClient chatClient(FoundrySettings settings, SpringAiOpenAiHttpClient transport, String accessToken) {
+        return chatClient(settings, transport, accessToken, ObservationRegistry.NOOP);
+    }
+
+    static ChatClient chatClient(FoundrySettings settings, SpringAiOpenAiHttpClient transport, String accessToken,
+                                 ObservationRegistry observations) {
         var sdkOptions = ClientOptions.builder()
                 .httpClient(transport)
                 .baseUrl(settings.baseUrl().toString())
@@ -48,8 +55,9 @@ class FoundryConnectivityConfiguration {
         var chatOptions = OpenAiChatOptions.builder().model(settings.deployment())
                 .maxCompletionTokens(settings.maxCompletionTokens()).timeout(settings.timeout()).build();
         var model = OpenAiChatModel.builder().openAiClient(new OpenAIClientImpl(sdkOptions))
-                .openAiClientAsync(new OpenAIClientAsyncImpl(sdkOptions)).options(chatOptions).build();
-        return ChatClient.create(model);
+                .openAiClientAsync(new OpenAIClientAsyncImpl(sdkOptions)).options(chatOptions)
+                .observationRegistry(observations).build();
+        return ChatClient.create(model, observations);
     }
 
     @Bean

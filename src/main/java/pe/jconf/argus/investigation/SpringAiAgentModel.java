@@ -1,5 +1,6 @@
 package pe.jconf.argus.investigation;
 
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.converter.BeanOutputConverter;
@@ -33,11 +34,17 @@ final class SpringAiAgentModel implements AgentModel {
     }
 
     SpringAiAgentModel(ChatClient client, RemoteModelProtection protection, Duration httpTimeout) {
+        this(client, protection, httpTimeout, ObservationRegistry.NOOP);
+    }
+
+    SpringAiAgentModel(ChatClient client, RemoteModelProtection protection, Duration httpTimeout,
+                       ObservationRegistry observations) {
         this.client = client;
         this.protection = protection;
         this.httpTimeout = httpTimeout;
         this.toolAdvisor = ToolCallingAdvisor.builder()
                 .toolCallingManager(DefaultToolCallingManager.builder()
+                        .observationRegistry(observations)
                         .maxCallsPerTool(ScopedTool.BUDGET).maxTotalToolCalls(ScopedTool.BUDGET)
                         .onLimitExceeded(ToolCallLimitBehavior.THROW).resolutionFallbackEnabled(false).build())
                 .build();

@@ -2,6 +2,7 @@ package pe.jconf.argus.assessment;
 
 import pe.jconf.argus.domain.RiskSignal;
 import pe.jconf.argus.domain.Transaction;
+import pe.jconf.argus.observability.ArgusTelemetry;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -21,9 +22,17 @@ public final class RiskAssessmentService {
     private final RiskDecisionEngine decisionEngine;
     private final AuditRecorder audit;
     private final Clock clock;
+    private final ArgusTelemetry telemetry;
 
     RiskAssessmentService(ScenarioCatalog catalog, RulesEngine rules, GraphDataProvider graphProvider,
                           MlPredictor predictor, RiskDecisionEngine decisionEngine, AuditRecorder audit, Clock clock) {
+        this(catalog, rules, graphProvider, predictor, decisionEngine, audit, clock, ArgusTelemetry.noop());
+    }
+
+    RiskAssessmentService(ScenarioCatalog catalog, RulesEngine rules, GraphDataProvider graphProvider,
+                          MlPredictor predictor, RiskDecisionEngine decisionEngine, AuditRecorder audit, Clock clock,
+                          ArgusTelemetry telemetry) {
+        this.telemetry = telemetry;
         this.catalog = catalog;
         this.rules = rules;
         this.graphProvider = graphProvider;
@@ -40,7 +49,14 @@ public final class RiskAssessmentService {
     }
 
     public Optional<Assessment> assess(String scenarioId) {
-        return catalog.find(scenarioId).map(this::assess);
+        var observation = telemetry.operation("argus.assessment");
+        return observation.observe(() -> {
+            var result = catalog.find(scenarioId).map(this::assess);
+            result.ifPresent(value -> telemetry.rememberAssessmentTrace(value.assessmentId()));
+            observation.lowCardinalityKeyValue("status",
+                    result.map(value -> value.riskDecision().decision().name()).orElse("UNKNOWN_SCENARIO"));
+            return result;
+        });
     }
 
     public Optional<Assessment> find(UUID assessmentId) {
@@ -56,8 +72,13 @@ public final class RiskAssessmentService {
         graph.ifPresent(evidence -> references.add(verify(transaction, GRAPH_DATA, evidence)));
         prediction.ifPresent(evidence -> references.add(verify(transaction, SYNTHETIC_ML, evidence)));
 
-        var decision = decisionEngine.decide(transaction, rules.evaluate(scenario.hotPath().violatesMandatoryPolicy()),
-                graph, prediction, clock.instant());
+        var evaluation = telemetry.operation("argus.assessment.decision");
+        var decision = evaluation.observe(() -> {
+            var result = decisionEngine.decide(transaction, rules.evaluate(scenario.hotPath().violatesMandatoryPolicy()),
+                    graph, prediction, clock.instant());
+            evaluation.lowCardinalityKeyValue("status", result.decision().name());
+            return result;
+        });
         var assessment = new Assessment(UUID.randomUUID(), RiskDecisionEngine.POLICY_ID, decision, references,
                 decisionEngine.reasonCodes(decision));
         audit.record(assessment);
@@ -75,4 +96,3 @@ public final class RiskAssessmentService {
     public record ScenarioSummary(String scenarioId, String transactionId) {
     }
 }
-

@@ -68,6 +68,12 @@ The default profile runs both simulated agents. Repeat the GET to retrieve the f
 
 The Investigation Path includes shared model protection, per-agent isolation, and configurable time budgets. Use the local failure controls and scripted checks in [Offline failure scenarios](docs/failure-scenarios.md) to demonstrate partial reports, circuit recovery, and retained permits.
 
+## Trace the offline demo
+
+Use the opt-in `demo-observability` profile with `demo-local` or an authorized `demo-azure` deployment. The demo can send sanitized OTLP traces to local Tempo and inspect them in Grafana Explore. Basic local execution remains independent of Docker and telemetry services.
+
+See [Observability demo](docs/observability-demo.md) for startup, the five trace scenarios, and a diagnostic that runs without Docker.
+
 ## Project documentation
 
 - [Contributor instructions](AGENTS.md)
@@ -77,6 +83,9 @@ The Investigation Path includes shared model protection, per-agent isolation, an
 - [Agent engineering](docs/agent-engineering.md)
 - [Multi-agent orchestration](docs/multi-agent-orchestration.md)
 - [Investigation lifecycle](docs/investigation-lifecycle.md)
+- [Observability](docs/observability.md)
+- [Distributed tracing](docs/distributed-tracing.md)
+- [Observability demo](docs/observability-demo.md)
 - [Resilience](docs/resilience.md)
 - [Containment](docs/containment.md)
 - [Offline failure scenarios](docs/failure-scenarios.md)
