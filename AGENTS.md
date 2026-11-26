@@ -12,4 +12,4 @@ ARGUS is an educational proof of concept for JConf Peru 2026. The session is “
 - Use synthetic data exclusively. Never connect to real financial operations or hardcode credentials.
 - Keep demo-local credential-free and offline at runtime. Implement deterministic simulated responses when investigation is in scope. Use the Spring AI 2.0 OpenAI starter with Microsoft Foundry and Azure OpenAI for demo-azure.
 - Use Resilience4j for resilience, Micrometer and OpenTelemetry for observability, Spring Boot-managed JUnit and Mockito for tests, and plain HTML, CSS, and JavaScript for the dashboard.
-- Phase 01 covers foundation corrections, domain contracts, synthetic fixtures, tests, and documentation. Obtain explicit approval before implementing Hot Path decision logic or Investigation Path agents and provider integration.
+- Phase 02 covers the offline deterministic Hot Path, its local REST API, and volatile audit. Obtain explicit approval before implementing Investigation Path workflows, agents, or provider integration.

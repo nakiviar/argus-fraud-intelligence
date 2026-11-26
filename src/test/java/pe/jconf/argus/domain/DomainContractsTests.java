@@ -141,6 +141,6 @@ class DomainContractsTests {
     }
 
     record Scenario(String scenario, Transaction transaction, RiskDecision expectedDecision,
-                    Map<AgentType, AgentExecutionStatus> expectedAgentStatuses, JsonNode invalidAgentPayload) {
+                    Map<AgentType, AgentExecutionStatus> expectedAgentStatuses, JsonNode invalidAgentPayload, JsonNode hotPath) {
     }
 }

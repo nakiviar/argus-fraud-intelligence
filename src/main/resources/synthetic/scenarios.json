@@ -1,6 +1,11 @@
 [
   {
     "scenario": "normal",
+    "hotPath": {
+      "violatesMandatoryPolicy": false,
+      "graph": "CLEAR",
+      "prediction": "CLEAR"
+    },
     "transaction": {
       "transactionId": "SYN-TXN-001",
       "sourceAccountId": "SYN-ACCOUNT-A1",
@@ -21,6 +26,11 @@
   },
   {
     "scenario": "additional-review",
+    "hotPath": {
+      "violatesMandatoryPolicy": false,
+      "graph": "REVIEW",
+      "prediction": "CLEAR"
+    },
     "transaction": {
       "transactionId": "SYN-TXN-002",
       "sourceAccountId": "SYN-ACCOUNT-A2",
@@ -50,6 +60,11 @@
   },
   {
     "scenario": "mandatory-policy",
+    "hotPath": {
+      "violatesMandatoryPolicy": true,
+      "graph": "CLEAR",
+      "prediction": "CLEAR"
+    },
     "transaction": {
       "transactionId": "SYN-TXN-003",
       "sourceAccountId": "SYN-ACCOUNT-A3",
@@ -76,6 +91,11 @@
   },
   {
     "scenario": "unavailable-evidence",
+    "hotPath": {
+      "violatesMandatoryPolicy": false,
+      "graph": "UNAVAILABLE",
+      "prediction": "CLEAR"
+    },
     "transaction": {
       "transactionId": "SYN-TXN-004",
       "sourceAccountId": "SYN-ACCOUNT-A4",
@@ -101,6 +121,11 @@
   },
   {
     "scenario": "invalid-agent-response",
+    "hotPath": {
+      "violatesMandatoryPolicy": false,
+      "graph": "CLEAR",
+      "prediction": "REVIEW"
+    },
     "invalidAgentPayload": {
       "observation": "Synthetic invalid confidence example",
       "confidence": 1.25,

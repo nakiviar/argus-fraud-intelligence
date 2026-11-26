@@ -2,7 +2,7 @@
 
 **Agents investigate. Deterministic code decides.**
 
-ARGUS is a fictional banking fraud investigation proof of concept for JConf Peru 2026. Phase 01 defines the domain contracts and synthetic scenarios for two paths. The Hot Path will assess transactions synchronously with deterministic code. The Investigation Path will gather evidence for human review after a REVIEW decision. The current application exposes health on localhost.
+ARGUS is a fictional banking fraud investigation proof of concept for JConf Peru 2026. Phase 02 implements the offline Hot Path and exposes a local API for synthetic assessments. The future Investigation Path will gather evidence for human review after a REVIEW recommendation.
 
 ## Prerequisites
 
@@ -23,6 +23,16 @@ java -jar target/argus-fraud-intelligence-0.1.0-SNAPSHOT.jar
 
 Open http://127.0.0.1:8080/actuator/health. The default profile is `demo-local`. The packaged application runs offline and uses no cloud credentials. Use `mvn -o test` after caching the test dependencies and plugins.
 
+## Run a synthetic assessment
+
+```powershell
+$base = 'http://127.0.0.1:8080'
+Invoke-RestMethod "$base/api/v1/scenarios"
+Invoke-RestMethod "$base/api/v1/assessments" -Method Post -ContentType 'application/json' -Body '{"scenarioId":"normal"}'
+```
+
+The normal scenario returns APPROVE. The assessment is stored in memory until the process stops. See the [API guide](docs/api.md) for all endpoints and examples.
+
 ## Microsoft Foundry profile
 
 Set `AZURE_OPENAI_BASE_URL` to your Azure OpenAI v1 base URL, such as `https://RESOURCE.openai.azure.com/openai/v1/`. Set `AZURE_OPENAI_DEPLOYMENT` to the chat deployment name and supply `AZURE_OPENAI_API_KEY` through the environment or a secret provider. Launch with:
@@ -37,6 +47,8 @@ Phase 0 configures the chat client. The health endpoint checks application healt
 
 - [Contributor instructions](AGENTS.md)
 - [Architecture](docs/architecture.md)
+- [Deterministic baseline](docs/deterministic-baseline.md)
+- [API guide](docs/api.md)
 - [Domain model](docs/domain-model.md)
 - [Synthetic scenarios](src/main/resources/synthetic/scenarios.json)
 - [Roadmap](docs/roadmap.md)
