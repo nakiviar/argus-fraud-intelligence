@@ -1,5 +1,7 @@
 package pe.jconf.argus.investigation;
 
+import io.github.resilience4j.bulkhead.BulkheadFullException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.springframework.core.io.ClassPathResource;
 import pe.jconf.argus.domain.AgentEvidence;
 import pe.jconf.argus.domain.AgentExecutionResult;
@@ -40,14 +42,20 @@ final class AgentExecution {
         AgentExecutionStatus status;
         AgentDiagnosticResult.Validation validation;
         try {
+            tool.budget().requireTime();
             finding = model.generate(instructions, tool, fixture);
+            tool.budget().requireTime();
             evidence = validator.validate(finding, tool);
             status = evidence.isPresent() ? AgentExecutionStatus.SUCCESS : AgentExecutionStatus.UNAVAILABLE;
             validation = evidence.isPresent() ? AgentDiagnosticResult.Validation.VERIFIED
                     : AgentDiagnosticResult.Validation.NO_EVIDENCE;
         } catch (JacksonException | EvidenceValidator.InvalidFinding exception) {
+            tool.budget().emit(ResilienceEvent.Type.EVIDENCE_VALIDATION_FAILED, "INVALID_RESPONSE");
             status = AgentExecutionStatus.INVALID_RESPONSE;
             validation = AgentDiagnosticResult.Validation.REJECTED;
+        } catch (CallNotPermittedException | BulkheadFullException exception) {
+            status = AgentExecutionStatus.UNAVAILABLE;
+            validation = AgentDiagnosticResult.Validation.NOT_RUN;
         } catch (RuntimeException exception) {
             status = isTimeout(exception) ? AgentExecutionStatus.TIMEOUT : AgentExecutionStatus.ERROR;
             validation = AgentDiagnosticResult.Validation.NOT_RUN;
@@ -81,7 +89,7 @@ final class AgentExecution {
 
     private static boolean isTimeout(Throwable failure) {
         for (var current = failure; current != null; current = current.getCause()) {
-            if (current instanceof InterruptedIOException) {
+            if (current instanceof InterruptedIOException || current instanceof ExecutionBudget.Expired) {
                 return true;
             }
         }

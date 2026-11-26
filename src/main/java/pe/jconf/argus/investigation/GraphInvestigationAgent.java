@@ -25,13 +25,22 @@ final class GraphInvestigationAgent implements InvestigationAgent {
 
     @Override
     public AgentDiagnosticResult investigate(InvestigationContext context) {
-        return execution.run(type(), instructions, graphTool(context));
+        return investigate(context, ExecutionBudget.standalone(context.investigationId()));
+    }
+
+    @Override
+    public AgentDiagnosticResult investigate(InvestigationContext context, ExecutionBudget budget) {
+        return execution.run(type(), instructions, graphTool(context, budget));
     }
 
     ScopedTool graphTool(InvestigationContext context) {
+        return graphTool(context, ExecutionBudget.standalone(context.investigationId()));
+    }
+
+    private ScopedTool graphTool(InvestigationContext context, ExecutionBudget budget) {
         var transaction = context.transaction();
         return new ScopedTool("read_graph_relationship", "Read the current fictional account relationship. Input: {}.",
-                context, EvidenceType.GRAPH, () -> graph.findEvidence(transaction).map(result -> {
+                context, budget, EvidenceType.GRAPH, () -> graph.findEvidence(transaction).map(result -> {
                     if (!result.transactionId().equals(transaction.transactionId())) {
                         throw new IllegalStateException("Graph result is outside the scoped transaction.");
                     }

@@ -47,6 +47,15 @@ final class InvestigationFixtures {
                 });
     }
 
+    InvestigationContext authorize(RiskDecision decision) {
+        var transaction = scenarios.values().stream().map(Scenario::transaction)
+                .filter(value -> value.transactionId().equals(decision.transactionId()))
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown synthetic transaction."));
+        var now = Instant.now();
+        return new InvestigationContext(UUID.randomUUID(), transaction, decision,
+                now.isBefore(decision.decidedAt()) ? decision.decidedAt() : now);
+    }
+
     Scenario require(InvestigationContext context) {
         return scenarios.values().stream()
                 .filter(scenario -> scenario.transaction().equals(context.transaction()))

@@ -26,11 +26,12 @@ public final class ScopedTool implements ToolCallback {
     private final ToolDefinition definition;
     private final InvestigationContext context;
     private final EvidenceType type;
+    private final ExecutionBudget budget;
     private final Supplier<Optional<Fact>> lookup;
     private final List<Trace> traces = new ArrayList<>();
     private final List<Reply> returned = new ArrayList<>();
 
-    ScopedTool(String name, String description, InvestigationContext context, EvidenceType type,
+    ScopedTool(String name, String description, InvestigationContext context, ExecutionBudget budget, EvidenceType type,
                Supplier<Optional<Fact>> lookup) {
         definition = ToolDefinition.builder().name(name).description(description)
                 .inputSchema("""
@@ -38,6 +39,7 @@ public final class ScopedTool implements ToolCallback {
                         """).build();
         this.context = context;
         this.type = type;
+        this.budget = budget;
         this.lookup = lookup;
     }
 
@@ -57,6 +59,7 @@ public final class ScopedTool implements ToolCallback {
 
     @Override
     public synchronized String call(String arguments, ToolContext suppliedContext) {
+        budget.requireTime();
         if (traces.size() >= BUDGET) {
             return JSON.writeValueAsString(new Reply(Status.BUDGET_EXCEEDED, null, null));
         }
@@ -67,7 +70,9 @@ public final class ScopedTool implements ToolCallback {
             return report(new Reply(Status.INVALID_ARGUMENTS, null, null));
         }
 
+        budget.requireTime();
         var fact = lookup.get();
+        budget.requireTime();
         if (fact.isEmpty()) {
             return report(new Reply(Status.UNAVAILABLE, null, null));
         }
@@ -92,6 +97,10 @@ public final class ScopedTool implements ToolCallback {
             returned.add(reply);
         }
         return encoded;
+    }
+
+    ExecutionBudget budget() {
+        return budget;
     }
 
     InvestigationContext investigation() {

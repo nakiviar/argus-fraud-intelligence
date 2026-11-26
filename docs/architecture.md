@@ -16,20 +16,18 @@ See [Azure integration](azure-integration.md) for the endpoint and authenticatio
 
 Phase 04 packages both agents in `pe.jconf.argus.investigation`. The command line selects one agent for a bundled REVIEW snapshot. Each execution receives its own authorization scope and callback ledger. Java validates citations and supported findings before creating the existing agent execution contract. Local and Foundry adapters share the authorization and evidence validation code. See [Agent Engineering](agent-engineering.md).
 
-## Planned orchestrated Investigation Path
+## Orchestrated Investigation Path
 
-Phase 02 exposes `investigationRequired: true` for REVIEW. A later phase will open an investigation with a snapshot of the transaction and its Hot Path decision. The orchestrator will run the Graph Investigation Agent and Behavioral Investigation Agent concurrently with bounded fan-out/fan-in. Tools will read narrowly scoped synthetic data and the application will record each tool execution. The evidence validator will resolve candidate citations against the recorded results for the current investigation and agent. The orchestrator will report each execution outcome, including timeouts and unavailable evidence.
-
-The planned report supplies context to a human reviewer. The original decision remains available in the report. Agents have no financial operations or decision override capability. The dashboard will present the decision alongside the report for human review.
-
+The Investigation API accepts an existing assessment ID, checks its REVIEW decision and registers an investigation before submitting work. The orchestrator runs Graph and Behavioral concurrently against the same immutable case, with a separate scope and tool ledger per execution. Fan-in retains verified results and represents failed or missing results explicitly. The completed report includes the original risk decision and supports human review.
 ```mermaid
 flowchart LR
     T[Synthetic transaction] --> H[Hot Path]
     H --> R[Rules, graph data, synthetic predictor]
     R --> D[Deterministic Risk Decision Engine]
     D --> O[APPROVE or BLOCK]
-    D --> C[REVIEW investigation context]
-    C --> F[Concurrent investigation orchestrator]
+    D --> C[Stored REVIEW assessment]
+    C --> I[Explicit asynchronous investigation POST]
+    I --> F[Concurrent investigation orchestrator]
     F --> G[Graph agent]
     F --> B[Behavioral agent]
     G --> V[Evidence validation against tool records]
@@ -47,6 +45,6 @@ flowchart LR
 | Application-owned outcome metadata | Investigations remain attributable when model output is invalid or unavailable. |
 | Explicit availability in both paths | Policy and human reviewers can account for missing inputs without treating missing data as zero risk. |
 
-The future resilience layer will bound latency and concurrency. Audit and observability will correlate decisions, investigation reports, and execution outcomes using Micrometer and OpenTelemetry. Both profiles expose the assessment API and health on loopback when running as a web application. Concurrent orchestration, report aggregation, and workflow integration remain future work.
+The future resilience layer will bound latency and concurrency. Audit and observability will correlate decisions, investigation reports, and execution outcomes using Micrometer and OpenTelemetry. Both profiles expose the assessment API and health on loopback when running as a web application. Phase 05 implements concurrent orchestration and report aggregation in process. See [Multi-agent orchestration](multi-agent-orchestration.md) and [Investigation lifecycle](investigation-lifecycle.md).
 
 See [Domain model](domain-model.md) for contract ownership and examples.

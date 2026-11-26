@@ -2,7 +2,7 @@
 
 **Agents investigate. Deterministic code decides.**
 
-ARGUS is a fictional banking fraud investigation proof of concept for JConf Peru 2026. ARGUS exposes an offline Hot Path for synthetic assessments. Phase 03 adds a separate command-line connectivity diagnostic for Microsoft Foundry. Phase 04 adds two independently executable investigation agents for synthetic REVIEW cases.
+ARGUS is a fictional banking fraud investigation proof of concept for JConf Peru 2026. ARGUS exposes an offline Hot Path for synthetic assessments. Phase 03 adds a separate command-line connectivity diagnostic for Microsoft Foundry. Two independently executable agents can also run concurrently in a separate asynchronous investigation for stored REVIEW assessments.
 
 ## Prerequisites
 
@@ -52,6 +52,18 @@ java -jar $jar --spring.profiles.active=demo-local --check-investigation-agent=b
 
 Each command runs one simulated agent, returns its evidence and validation outcome, and exits. See [Agent Engineering](docs/agent-engineering.md) for the missing-evidence example, the invalid-response example, and the opt-in Azure commands.
 
+## Run both agents on a REVIEW assessment
+
+```powershell
+$base = 'http://127.0.0.1:8080'
+$assessment = Invoke-RestMethod "$base/api/v1/assessments" -Method Post -ContentType 'application/json' -Body '{"scenarioId":"additional-review"}'
+$body = @{ assessmentId = $assessment.assessmentId } | ConvertTo-Json -Compress
+$submission = Invoke-WebRequest "$base/api/v1/investigations" -Method Post -ContentType 'application/json' -Body $body
+Invoke-RestMethod ($base + [string]$submission.Headers.Location)
+```
+
+The default profile runs both simulated agents. Repeat the GET to retrieve the final report. See [API](docs/api.md) for examples and errors, and [Multi-agent orchestration](docs/multi-agent-orchestration.md) for bounds, failure handling, and the opt-in behavior in `demo-azure`.
+
 ## Project documentation
 
 - [Contributor instructions](AGENTS.md)
@@ -59,6 +71,8 @@ Each command runs one simulated agent, returns its evidence and validation outco
 - [Azure integration](docs/azure-integration.md)
 - [Spring AI foundations](docs/spring-ai-foundations.md)
 - [Agent engineering](docs/agent-engineering.md)
+- [Multi-agent orchestration](docs/multi-agent-orchestration.md)
+- [Investigation lifecycle](docs/investigation-lifecycle.md)
 - [Tool Calling](docs/tool-calling.md)
 - [Structured Output](docs/structured-output.md)
 - [Deterministic baseline](docs/deterministic-baseline.md)

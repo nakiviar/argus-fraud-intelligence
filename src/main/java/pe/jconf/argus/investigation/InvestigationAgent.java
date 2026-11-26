@@ -7,4 +7,9 @@ public interface InvestigationAgent {
     AgentType type();
 
     AgentDiagnosticResult investigate(InvestigationContext context);
+
+    default AgentDiagnosticResult investigate(InvestigationContext context, ExecutionBudget budget) {
+        budget.requireTime();
+        return investigate(context);
+    }
 }

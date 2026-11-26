@@ -28,14 +28,23 @@ final class BehavioralInvestigationAgent implements InvestigationAgent {
 
     @Override
     public AgentDiagnosticResult investigate(InvestigationContext context) {
-        return execution.run(type(), instructions, behavioralTool(context));
+        return investigate(context, ExecutionBudget.standalone(context.investigationId()));
+    }
+
+    @Override
+    public AgentDiagnosticResult investigate(InvestigationContext context, ExecutionBudget budget) {
+        return execution.run(type(), instructions, behavioralTool(context, budget));
     }
 
     ScopedTool behavioralTool(InvestigationContext context) {
+        return behavioralTool(context, ExecutionBudget.standalone(context.investigationId()));
+    }
+
+    private ScopedTool behavioralTool(InvestigationContext context, ExecutionBudget budget) {
         var transaction = context.transaction();
         return new ScopedTool("read_behavioral_summary",
                 "Read the current fictional activity summary and fixture-based prediction. Input: {}.",
-                context, EvidenceType.BEHAVIORAL, () -> fixtures.historicalCount(transaction)
+                context, budget, EvidenceType.BEHAVIORAL, () -> fixtures.historicalCount(transaction)
                         .flatMap(count -> predictor.predict(transaction).map(result -> {
                             if (!result.transactionId().equals(transaction.transactionId())) {
                                 throw new IllegalStateException("Prediction is outside the scoped transaction.");

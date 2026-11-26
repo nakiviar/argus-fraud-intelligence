@@ -11,8 +11,12 @@ import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.time.Duration;
+
 final class SpringAiAgentModel implements AgentModel {
     private final ChatClient client;
+    private final RemoteModelProtection protection;
+    private final Duration httpTimeout;
     private final ToolCallingAdvisor toolAdvisor;
     private final BeanOutputConverter<ModelFinding> converter = new BeanOutputConverter<>(ModelFinding.class) {
         @Override
@@ -25,7 +29,13 @@ final class SpringAiAgentModel implements AgentModel {
     };
 
     SpringAiAgentModel(ChatClient client) {
+        this(client, new RemoteModelProtection(2, Duration.ofSeconds(20), event -> { }), Duration.ofSeconds(10));
+    }
+
+    SpringAiAgentModel(ChatClient client, RemoteModelProtection protection, Duration httpTimeout) {
         this.client = client;
+        this.protection = protection;
+        this.httpTimeout = httpTimeout;
         this.toolAdvisor = ToolCallingAdvisor.builder()
                 .toolCallingManager(DefaultToolCallingManager.builder()
                         .maxCallsPerTool(ScopedTool.BUDGET).maxTotalToolCalls(ScopedTool.BUDGET)
@@ -41,7 +51,8 @@ final class SpringAiAgentModel implements AgentModel {
     @Override
     public ModelFinding generate(String instructions, ScopedTool tool, InvestigationFixtures.Scenario fixture) {
         return client.prompt().system(instructions).user("Investigate the active fictional case using your scoped tool.")
-                .advisors(toolAdvisor).toolCallbacks(tool).toolContext(tool.toolContext())
+                .advisors(toolAdvisor, new ModelRoundAdvisor(protection, tool.budget(), httpTimeout))
+                .toolCallbacks(tool).toolContext(tool.toolContext())
                 .options(OpenAiChatOptions.builder().maxCompletionTokens(384))
                 .call().entity(converter);
     }
