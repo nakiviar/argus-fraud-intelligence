@@ -16,6 +16,7 @@ import java.time.Duration;
 
 final class SpringAiAgentModel implements AgentModel {
     private final ChatClient client;
+    private final AgentDiagnosticResult.Mode mode;
     private final RemoteModelProtection protection;
     private final Duration httpTimeout;
     private final ToolCallingAdvisor toolAdvisor;
@@ -39,7 +40,13 @@ final class SpringAiAgentModel implements AgentModel {
 
     SpringAiAgentModel(ChatClient client, RemoteModelProtection protection, Duration httpTimeout,
                        ObservationRegistry observations) {
+        this(client, protection, httpTimeout, observations, AgentDiagnosticResult.Mode.AZURE);
+    }
+
+    SpringAiAgentModel(ChatClient client, RemoteModelProtection protection, Duration httpTimeout,
+                       ObservationRegistry observations, AgentDiagnosticResult.Mode mode) {
         this.client = client;
+        this.mode = mode;
         this.protection = protection;
         this.httpTimeout = httpTimeout;
         this.toolAdvisor = ToolCallingAdvisor.builder()
@@ -52,7 +59,7 @@ final class SpringAiAgentModel implements AgentModel {
 
     @Override
     public AgentDiagnosticResult.Mode mode() {
-        return AgentDiagnosticResult.Mode.AZURE;
+        return mode;
     }
 
     @Override

@@ -3,7 +3,7 @@ package pe.jconf.argus.ai;
 public record ModelConnectivityResult(Mode mode, boolean connected, String deployment, long elapsedMillis,
                                       String response, TokenUsage tokenUsage, ErrorCategory errorCategory) {
     public enum Mode {
-        SIMULATED, AZURE
+        SIMULATED, AZURE, OLLAMA
     }
 
     public enum ErrorCategory {

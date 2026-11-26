@@ -32,7 +32,7 @@ java -jar target/argus-fraud-intelligence-0.1.0-SNAPSHOT.jar --server.port=8082 
 For local trace correlation, follow [the observability runbook](observability-demo.md) and start the app with both profiles plus an optional Grafana base URL.
 
 ```powershell
-java -jar target/argus-fraud-intelligence-0.1.0-SNAPSHOT.jar '--spring.profiles.active=demo-local,observability-local' --argus.dashboard.grafana-url=http://127.0.0.1:3000
+java -jar target/argus-fraud-intelligence-0.1.0-SNAPSHOT.jar '--spring.profiles.active=demo-local,demo-observability' --argus.dashboard.grafana-url=http://127.0.0.1:3000
 ```
 
 Copy the trace ID from Observability and paste it into Grafana Explore with the Tempo data source. Grafana visualization and live Foundry verification remain pending.
@@ -47,4 +47,3 @@ Copy the trace ID from Observability and paste it into Grafana Explore with the 
 | 7–10 | Run Invalid agent response and Unavailable evidence. Show accepted evidence alongside the rejected or unavailable agent outcome. |
 | 10–12 | Open the second process and run the timeout. Show PARTIAL, retained evidence, and the timeout event. |
 | 12–13 | Open Observability, show event and trace correlation availability, and close with the original REVIEW recommendation. |
-

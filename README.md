@@ -100,3 +100,9 @@ See [Observability demo](docs/observability-demo.md) for startup, the five trace
 ## Phase 08 dashboard
 
 Run the packaged JAR with demo-local and visit http://127.0.0.1:8080/. See [dashboard guide](docs/dashboard.md) and [conference runbook](docs/dashboard-demo.md).
+
+## Conference preparation
+
+ARGUS uses Java 21, Spring Boot 4.1.1, Spring AI 2.0.1, Resilience4j 2.4.0, Micrometer and OpenTelemetry. Review the [as-built architecture](docs/conference/ARCHITECTURE-AS-BUILT.md), [runbook](docs/conference/DEMO-RUNBOOK.md), [study guide](docs/conference/CONFERENCE-STUDY-GUIDE.md), [benchmarks](docs/conference/BENCHMARK-REPORT.md), and [conference assets](docs/conference/assets/README.md).
+
+The demo has normal, mandatory policy violation, additional review, invalid response and unavailable evidence fixtures. Local startup flags support a controlled failure or timeout. Domain data and local generation are synthetic. Storage is volatile, demo HTTP binds to loopback, and the prototype does not provide production identity, durable audit or validated fraud detection.

@@ -1,0 +1,90 @@
+[
+  {
+    "investigationId": "b9373162-7668-42ff-859d-3f76b2c111c3",
+    "agent": null,
+    "eventType": "INVESTIGATION_CREATED",
+    "occurredAt": "2026-11-26T20:21:09.733086Z",
+    "executionStatus": null,
+    "investigationStatus": "PENDING",
+    "outcome": null,
+    "traceId": "8d83ac8f0fb71d2505e300ef99543970",
+    "spanId": "c0158ca07488aa2a"
+  },
+  {
+    "investigationId": "b9373162-7668-42ff-859d-3f76b2c111c3",
+    "agent": null,
+    "eventType": "INVESTIGATION_STARTED",
+    "occurredAt": "2026-11-26T20:21:09.733086Z",
+    "executionStatus": null,
+    "investigationStatus": "RUNNING",
+    "outcome": null,
+    "traceId": "8d83ac8f0fb71d2505e300ef99543970",
+    "spanId": "c0158ca07488aa2a"
+  },
+  {
+    "investigationId": "b9373162-7668-42ff-859d-3f76b2c111c3",
+    "agent": "GRAPH",
+    "eventType": "AGENT_STARTED",
+    "occurredAt": "2026-11-26T20:21:09.733086Z",
+    "executionStatus": null,
+    "investigationStatus": "RUNNING",
+    "outcome": null,
+    "traceId": "8d83ac8f0fb71d2505e300ef99543970",
+    "spanId": "63601f65dfb839e2"
+  },
+  {
+    "investigationId": "b9373162-7668-42ff-859d-3f76b2c111c3",
+    "agent": "BEHAVIORAL",
+    "eventType": "AGENT_STARTED",
+    "occurredAt": "2026-11-26T20:21:09.734046700Z",
+    "executionStatus": null,
+    "investigationStatus": "RUNNING",
+    "outcome": null,
+    "traceId": "8d83ac8f0fb71d2505e300ef99543970",
+    "spanId": "a5f483d11f0c5dda"
+  },
+  {
+    "investigationId": "b9373162-7668-42ff-859d-3f76b2c111c3",
+    "agent": "GRAPH",
+    "eventType": "AGENT_COMPLETED",
+    "occurredAt": "2026-11-26T20:21:09.734046700Z",
+    "executionStatus": "SUCCESS",
+    "investigationStatus": "RUNNING",
+    "outcome": null,
+    "traceId": "8d83ac8f0fb71d2505e300ef99543970",
+    "spanId": "63601f65dfb839e2"
+  },
+  {
+    "investigationId": "b9373162-7668-42ff-859d-3f76b2c111c3",
+    "agent": "BEHAVIORAL",
+    "eventType": "AGENT_COMPLETED",
+    "occurredAt": "2026-11-26T20:21:09.734046700Z",
+    "executionStatus": "SUCCESS",
+    "investigationStatus": "RUNNING",
+    "outcome": null,
+    "traceId": "8d83ac8f0fb71d2505e300ef99543970",
+    "spanId": "a5f483d11f0c5dda"
+  },
+  {
+    "investigationId": "b9373162-7668-42ff-859d-3f76b2c111c3",
+    "agent": null,
+    "eventType": "EVIDENCE_AGGREGATED",
+    "occurredAt": "2026-11-26T20:21:09.735047900Z",
+    "executionStatus": null,
+    "investigationStatus": "AGGREGATING",
+    "outcome": null,
+    "traceId": "8d83ac8f0fb71d2505e300ef99543970",
+    "spanId": "b1973f8395e286bb"
+  },
+  {
+    "investigationId": "b9373162-7668-42ff-859d-3f76b2c111c3",
+    "agent": null,
+    "eventType": "INVESTIGATION_COMPLETED",
+    "occurredAt": "2026-11-26T20:21:09.735047900Z",
+    "executionStatus": null,
+    "investigationStatus": "COMPLETED",
+    "outcome": null,
+    "traceId": "8d83ac8f0fb71d2505e300ef99543970",
+    "spanId": "b1973f8395e286bb"
+  }
+]

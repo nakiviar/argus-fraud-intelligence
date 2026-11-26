@@ -1,0 +1,90 @@
+{
+  "traceId" : "8f5ba373552d97735c8eca7f7261f6bd",
+  "spans" : [ {
+    "parentSpanId" : "002ca9c4b8dafdbd",
+    "traceId" : "8f5ba373552d97735c8eca7f7261f6bd",
+    "endEpochNanos" : 1795724324956164600,
+    "kind" : "INTERNAL",
+    "spanId" : "7a720c760a138e2e",
+    "startEpochNanos" : 1795724324943323300,
+    "links" : [ ],
+    "name" : "argus.investigation.create"
+  }, {
+    "parentSpanId" : "6eea15b295bf36cd",
+    "traceId" : "8f5ba373552d97735c8eca7f7261f6bd",
+    "endEpochNanos" : 1795724324962449000,
+    "kind" : "INTERNAL",
+    "spanId" : "9348fd0443df9876",
+    "startEpochNanos" : 1795724324960602600,
+    "links" : [ ],
+    "name" : "argus.evidence.validation"
+  }, {
+    "parentSpanId" : "374abba7cb1af9f2",
+    "traceId" : "8f5ba373552d97735c8eca7f7261f6bd",
+    "endEpochNanos" : 1795724324962445600,
+    "kind" : "INTERNAL",
+    "spanId" : "1f8d43897fd44ad3",
+    "startEpochNanos" : 1795724324960602300,
+    "links" : [ ],
+    "name" : "argus.evidence.validation"
+  }, {
+    "parentSpanId" : "0f701aa27b9cc52c",
+    "traceId" : "8f5ba373552d97735c8eca7f7261f6bd",
+    "endEpochNanos" : 1795724324965368300,
+    "kind" : "INTERNAL",
+    "spanId" : "6eea15b295bf36cd",
+    "startEpochNanos" : 1795724324954959300,
+    "links" : [ ],
+    "name" : "argus.agent"
+  }, {
+    "parentSpanId" : "0f701aa27b9cc52c",
+    "traceId" : "8f5ba373552d97735c8eca7f7261f6bd",
+    "endEpochNanos" : 1795724324965548100,
+    "kind" : "INTERNAL",
+    "spanId" : "374abba7cb1af9f2",
+    "startEpochNanos" : 1795724324950249400,
+    "links" : [ ],
+    "name" : "argus.agent"
+  }, {
+    "parentSpanId" : "0f701aa27b9cc52c",
+    "traceId" : "8f5ba373552d97735c8eca7f7261f6bd",
+    "endEpochNanos" : 1795724324970096100,
+    "kind" : "INTERNAL",
+    "spanId" : "89789e8f6005febd",
+    "startEpochNanos" : 1795724324966712800,
+    "links" : [ ],
+    "name" : "argus.evidence.aggregation"
+  }, {
+    "parentSpanId" : "0f701aa27b9cc52c",
+    "traceId" : "8f5ba373552d97735c8eca7f7261f6bd",
+    "endEpochNanos" : 1795724324973414000,
+    "kind" : "INTERNAL",
+    "spanId" : "31e0347ad51a13ef",
+    "startEpochNanos" : 1795724324970544000,
+    "links" : [ ],
+    "name" : "argus.investigation.completion"
+  }, {
+    "parentSpanId" : "7a720c760a138e2e",
+    "traceId" : "8f5ba373552d97735c8eca7f7261f6bd",
+    "endEpochNanos" : 1795724324973581300,
+    "kind" : "INTERNAL",
+    "spanId" : "0f701aa27b9cc52c",
+    "startEpochNanos" : 1795724324944554100,
+    "links" : [ {
+      "traceId" : "2217a8232355beb0fde1d87a2326aa4c",
+      "spanId" : "65c1bf171aad1deb"
+    } ],
+    "name" : "argus.investigation"
+  }, {
+    "parentSpanId" : "0000000000000000",
+    "traceId" : "8f5ba373552d97735c8eca7f7261f6bd",
+    "endEpochNanos" : 1795724324974389600,
+    "kind" : "SERVER",
+    "spanId" : "002ca9c4b8dafdbd",
+    "startEpochNanos" : 1795724324941817200,
+    "links" : [ ],
+    "name" : "http post /api/v1/investigations"
+  } ],
+  "mode" : "SIMULATED",
+  "investigationId" : "0d95cad4-87b1-4dab-b04a-9c014a3f0a65"
+}

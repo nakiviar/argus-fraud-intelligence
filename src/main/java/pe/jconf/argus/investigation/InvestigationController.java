@@ -20,7 +20,7 @@ import java.util.UUID;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@Profile({"demo-local & !demo-azure", "demo-azure & !demo-local"})
+@Profile({"demo-local", "demo-azure", "demo-ollama"})
 @RequestMapping(path = InvestigationController.PATH, produces = APPLICATION_JSON_VALUE)
 class InvestigationController {
     static final String PATH = "/api/v1/investigations";

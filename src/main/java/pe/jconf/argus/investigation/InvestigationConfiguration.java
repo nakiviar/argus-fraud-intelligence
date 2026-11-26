@@ -19,7 +19,7 @@ import java.time.Duration;
 import java.util.List;
 
 @Configuration(proxyBeanMethods = false)
-@Profile({"demo-local & !demo-azure", "demo-azure & !demo-local"})
+@Profile({"demo-local", "demo-azure", "demo-ollama"})
 class InvestigationConfiguration {
     @Bean
     InvestigationFixtures investigationFixtures() throws IOException {
@@ -33,10 +33,10 @@ class InvestigationConfiguration {
     }
 
     @Bean
-    @Profile("demo-azure & !demo-local")
-    AgentModel springAiAgentModel(ChatClient foundryChatClient, RemoteModelProtection protection, InvestigationBudgets budgets,
-                                  ObservationRegistry observations) {
-        return new SpringAiAgentModel(foundryChatClient, protection, budgets.http(), observations);
+    @Profile({"demo-azure", "demo-ollama"})
+    AgentModel springAiAgentModel(ChatClient chatClient, RemoteModelProtection protection, InvestigationBudgets budgets,
+                                  ObservationRegistry observations, org.springframework.core.env.Environment environment) {
+        return new SpringAiAgentModel(chatClient, protection, budgets.http(), observations, environment.matchesProfiles("demo-ollama") ? AgentDiagnosticResult.Mode.OLLAMA : AgentDiagnosticResult.Mode.AZURE);
     }
 
     @Bean
@@ -64,7 +64,7 @@ class InvestigationConfiguration {
     }
 
     @Bean
-    @Profile("demo-azure & !demo-local")
+    @Profile({"demo-azure", "demo-ollama"})
     RemoteModelProtection remoteModelProtection(ApplicationEventPublisher events) {
         return new RemoteModelProtection(2, Duration.ofSeconds(20), events::publishEvent);
     }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pe.jconf.argus.domain.AgentType;
 
 @RestController
-@Profile({"demo-local & !demo-azure", "demo-azure & !demo-local"})
+@Profile({"demo-local", "demo-azure", "demo-ollama"})
 class DashboardMetadataController {
     private final AgentModel model;
     private final Environment environment;

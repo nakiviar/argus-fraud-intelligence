@@ -16,8 +16,14 @@ final class AzureModelConnectivityService implements ModelConnectivityService {
 
     private final ChatClient chatClient;
     private final String deployment;
+    private final ModelConnectivityResult.Mode mode;
 
     AzureModelConnectivityService(ChatClient chatClient, String deployment) {
+        this(chatClient, deployment, AZURE);
+    }
+
+    AzureModelConnectivityService(ChatClient chatClient, String deployment, ModelConnectivityResult.Mode mode) {
+        this.mode = mode;
         this.chatClient = chatClient;
         this.deployment = deployment;
     }
@@ -33,11 +39,11 @@ final class AzureModelConnectivityService implements ModelConnectivityService {
             var tokens = usage == null ? null : new ModelConnectivityResult.TokenUsage(
                     usage.getPromptTokens(), usage.getCompletionTokens(), usage.getTotalTokens());
             boolean acknowledged = text != null && ACKNOWLEDGEMENT.equals(text.strip());
-            return new ModelConnectivityResult(AZURE, acknowledged, deployment, elapsed(start),
+            return new ModelConnectivityResult(mode, acknowledged, deployment, elapsed(start),
                     acknowledged ? ACKNOWLEDGEMENT : null, tokens,
                     acknowledged ? null : ErrorCategory.UNEXPECTED_RESPONSE);
         } catch (RuntimeException exception) {
-            return new ModelConnectivityResult(AZURE, false, deployment, elapsed(start), null, null, classify(exception));
+            return new ModelConnectivityResult(mode, false, deployment, elapsed(start), null, null, classify(exception));
         }
     }
 

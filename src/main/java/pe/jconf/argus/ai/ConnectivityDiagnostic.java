@@ -28,7 +28,9 @@ public final class ConnectivityDiagnostic {
                 .properties("logging.level.root=OFF")
                 .initializers(initialized -> {
                     var environment = initialized.getEnvironment();
-                    if (environment.acceptsProfiles(Profiles.of("demo-azure & !demo-local"))) {
+                    if (environment.matchesProfiles("demo-ollama")) {
+                        mode.set(ModelConnectivityResult.Mode.OLLAMA);
+                    } else if (environment.acceptsProfiles(Profiles.of("demo-azure & !demo-local"))) {
                         mode.set(ModelConnectivityResult.Mode.AZURE);
                     } else if (environment.acceptsProfiles(Profiles.of("demo-local & !demo-azure"))) {
                         mode.set(ModelConnectivityResult.Mode.SIMULATED);

@@ -14,7 +14,7 @@ public record AgentDiagnosticResult(Mode mode, AgentExecutionResult execution, V
     }
 
     public enum Mode {
-        SIMULATED, AZURE
+        SIMULATED, AZURE, OLLAMA
     }
 
     public enum Validation {
