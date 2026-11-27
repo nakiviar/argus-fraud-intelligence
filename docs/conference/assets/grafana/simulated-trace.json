@@ -1,0 +1,305 @@
+{
+  "batches": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "argus-fraud-intelligence"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "org.springframework.boot",
+            "version": "4.1.1"
+          },
+          "spans": [
+            {
+              "traceId": "s+oUz5/Miz2U7XLm+4dv6w==",
+              "spanId": "O1QHmJqfolw=",
+              "name": "http post /api/v1/investigations",
+              "kind": "SPAN_KIND_SERVER",
+              "startTimeUnixNano": "1795725499310111700",
+              "endTimeUnixNano": "1795725499441923500",
+              "attributes": [
+                {
+                  "key": "exception",
+                  "value": {
+                    "stringValue": "none"
+                  }
+                },
+                {
+                  "key": "method",
+                  "value": {
+                    "stringValue": "POST"
+                  }
+                },
+                {
+                  "key": "outcome",
+                  "value": {
+                    "stringValue": "SUCCESS"
+                  }
+                },
+                {
+                  "key": "status",
+                  "value": {
+                    "stringValue": "202"
+                  }
+                },
+                {
+                  "key": "uri",
+                  "value": {
+                    "stringValue": "/api/v1/investigations"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "s+oUz5/Miz2U7XLm+4dv6w==",
+              "spanId": "y3995Xk0FrI=",
+              "parentSpanId": "O1QHmJqfolw=",
+              "name": "argus.investigation.create",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725499314503700",
+              "endTimeUnixNano": "1795725499366939600",
+              "attributes": [
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "SIMULATED"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "s+oUz5/Miz2U7XLm+4dv6w==",
+              "spanId": "xcmV/3lTYrc=",
+              "parentSpanId": "y3995Xk0FrI=",
+              "name": "argus.investigation",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725499316422400",
+              "endTimeUnixNano": "1795725499411934400",
+              "attributes": [
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "SIMULATED"
+                  }
+                },
+                {
+                  "key": "status",
+                  "value": {
+                    "stringValue": "COMPLETED"
+                  }
+                }
+              ],
+              "links": [
+                {
+                  "traceId": "V1KwbRFDmPxC/B1Gi37l7Q==",
+                  "spanId": "qBKW5vmH6OM="
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "s+oUz5/Miz2U7XLm+4dv6w==",
+              "spanId": "ScpmnaQ4leM=",
+              "parentSpanId": "xcmV/3lTYrc=",
+              "name": "argus.agent",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725499338100400",
+              "endTimeUnixNano": "1795725499384383600",
+              "attributes": [
+                {
+                  "key": "agent",
+                  "value": {
+                    "stringValue": "GRAPH"
+                  }
+                },
+                {
+                  "key": "late",
+                  "value": {
+                    "stringValue": "false"
+                  }
+                },
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "SIMULATED"
+                  }
+                },
+                {
+                  "key": "status",
+                  "value": {
+                    "stringValue": "SUCCESS"
+                  }
+                },
+                {
+                  "key": "token.usage",
+                  "value": {
+                    "stringValue": "unavailable"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "s+oUz5/Miz2U7XLm+4dv6w==",
+              "spanId": "7BNNimGU70Q=",
+              "parentSpanId": "xcmV/3lTYrc=",
+              "name": "argus.agent",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725499363921700",
+              "endTimeUnixNano": "1795725499383862500",
+              "attributes": [
+                {
+                  "key": "agent",
+                  "value": {
+                    "stringValue": "BEHAVIORAL"
+                  }
+                },
+                {
+                  "key": "late",
+                  "value": {
+                    "stringValue": "false"
+                  }
+                },
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "SIMULATED"
+                  }
+                },
+                {
+                  "key": "status",
+                  "value": {
+                    "stringValue": "SUCCESS"
+                  }
+                },
+                {
+                  "key": "token.usage",
+                  "value": {
+                    "stringValue": "unavailable"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "s+oUz5/Miz2U7XLm+4dv6w==",
+              "spanId": "6cwjUucy73s=",
+              "parentSpanId": "7BNNimGU70Q=",
+              "name": "argus.evidence.validation",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725499374783000",
+              "endTimeUnixNano": "1795725499379534200",
+              "attributes": [
+                {
+                  "key": "agent",
+                  "value": {
+                    "stringValue": "BEHAVIORAL"
+                  }
+                },
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "SIMULATED"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "s+oUz5/Miz2U7XLm+4dv6w==",
+              "spanId": "ET5nOcZPswE=",
+              "parentSpanId": "ScpmnaQ4leM=",
+              "name": "argus.evidence.validation",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725499375993700",
+              "endTimeUnixNano": "1795725499379807200",
+              "attributes": [
+                {
+                  "key": "agent",
+                  "value": {
+                    "stringValue": "GRAPH"
+                  }
+                },
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "SIMULATED"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "s+oUz5/Miz2U7XLm+4dv6w==",
+              "spanId": "X+5UrS4qqYk=",
+              "parentSpanId": "xcmV/3lTYrc=",
+              "name": "argus.evidence.aggregation",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725499388719300",
+              "endTimeUnixNano": "1795725499395438500",
+              "attributes": [
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "SIMULATED"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "s+oUz5/Miz2U7XLm+4dv6w==",
+              "spanId": "5Hwm4wFiCIc=",
+              "parentSpanId": "xcmV/3lTYrc=",
+              "name": "argus.investigation.completion",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725499396128400",
+              "endTimeUnixNano": "1795725499411496300",
+              "attributes": [
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "SIMULATED"
+                  }
+                },
+                {
+                  "key": "status",
+                  "value": {
+                    "stringValue": "COMPLETED"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

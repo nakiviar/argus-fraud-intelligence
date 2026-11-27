@@ -22,3 +22,7 @@
 | 11–12 | Mostrar traza | Los workers abren scopes y sus spans son hermanos | Trace ID o archivo de spans | InvestigationOrchestrator.inScope | Cerrar con límites | Abrir span-example.json |
 | 12–13 | Volver al informe | Agents investigate. Deterministic code decides. | REVIEW original y evidencia preservada | EvidenceAggregator.aggregate | Preguntas | Captura de caso parcial |
 
+
+## Local inference and LGTM
+
+**Variante Ollama.** Antes de la charla, comprueba ambos agentes con el modelo caliente. Durante la espera, muestra el callback y la validación en el IDE. Si falta evidencia, muestra el resultado parcial y cambia explícitamente a demo-local.

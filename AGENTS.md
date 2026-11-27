@@ -17,3 +17,7 @@ ARGUS is an educational proof of concept for JConf Peru 2026. The session is “
 ## Dashboard constraints
 
 Phase 08 serves the dashboard from Spring Boot static resources. Keep the UI dependency-free and same-origin. Render untrusted values as text and derive outcomes, timestamps, and provenance from backend contracts. Phase 09 requires explicit approval.
+
+## Local inference and LGTM
+
+Keep demo-ollama loopback-only and mutually exclusive with simulation and Azure. Use actual local runs for claims about model behavior.

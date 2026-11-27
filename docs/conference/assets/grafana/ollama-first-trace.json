@@ -1,0 +1,987 @@
+{
+  "batches": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "argus-fraud-intelligence"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "org.springframework.boot",
+            "version": "4.1.1"
+          },
+          "spans": [
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "BfSXikG+r+Q=",
+              "name": "http post /api/v1/investigations",
+              "kind": "SPAN_KIND_SERVER",
+              "startTimeUnixNano": "1795725686246266900",
+              "endTimeUnixNano": "1795725686353884800",
+              "attributes": [
+                {
+                  "key": "exception",
+                  "value": {
+                    "stringValue": "none"
+                  }
+                },
+                {
+                  "key": "method",
+                  "value": {
+                    "stringValue": "POST"
+                  }
+                },
+                {
+                  "key": "outcome",
+                  "value": {
+                    "stringValue": "SUCCESS"
+                  }
+                },
+                {
+                  "key": "status",
+                  "value": {
+                    "stringValue": "202"
+                  }
+                },
+                {
+                  "key": "uri",
+                  "value": {
+                    "stringValue": "/api/v1/investigations"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "noCh0fKJHfs=",
+              "parentSpanId": "BfSXikG+r+Q=",
+              "name": "argus.investigation.create",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725686249574000",
+              "endTimeUnixNano": "1795725686324354200",
+              "attributes": [
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "OLLAMA"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "argus-fraud-intelligence"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "org.springframework.boot",
+            "version": "4.1.1"
+          },
+          "spans": [
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "q8NkAMv458k=",
+              "parentSpanId": "noCh0fKJHfs=",
+              "name": "argus.investigation",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725686251255400",
+              "endTimeUnixNano": "1795725740019095800",
+              "attributes": [
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "OLLAMA"
+                  }
+                },
+                {
+                  "key": "status",
+                  "value": {
+                    "stringValue": "COMPLETED"
+                  }
+                }
+              ],
+              "links": [
+                {
+                  "traceId": "oT2qRDUYQH+g8RweZpZxvw==",
+                  "spanId": "zKtPnr7NNDk="
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "xxI/lswPY/o=",
+              "parentSpanId": "q8NkAMv458k=",
+              "name": "argus.agent",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725686315034400",
+              "endTimeUnixNano": "1795725740010735900",
+              "attributes": [
+                {
+                  "key": "agent",
+                  "value": {
+                    "stringValue": "GRAPH"
+                  }
+                },
+                {
+                  "key": "late",
+                  "value": {
+                    "stringValue": "false"
+                  }
+                },
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "OLLAMA"
+                  }
+                },
+                {
+                  "key": "status",
+                  "value": {
+                    "stringValue": "SUCCESS"
+                  }
+                },
+                {
+                  "key": "token.usage",
+                  "value": {
+                    "stringValue": "see.model"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "jO17nK9VW/M=",
+              "parentSpanId": "xxI/lswPY/o=",
+              "name": "spring_ai chat_client",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725686365002800",
+              "endTimeUnixNano": "1795725740008628500",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "framework"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "chat_client"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 2,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "a6Rz/SCv28Q=",
+              "parentSpanId": "jO17nK9VW/M=",
+              "name": "tool _calling ",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725686372073500",
+              "endTimeUnixNano": "1795725740008307700",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "framework"
+                  }
+                },
+                {
+                  "key": "spring.ai.advisor.name",
+                  "value": {
+                    "stringValue": "Tool Calling Advisor"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "advisor"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "i5SQVNcid1E=",
+              "parentSpanId": "a6Rz/SCv28Q=",
+              "name": "argus model round containment",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725696756044800",
+              "endTimeUnixNano": "1795725740007920900",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "framework"
+                  }
+                },
+                {
+                  "key": "spring.ai.advisor.name",
+                  "value": {
+                    "stringValue": "ARGUS model round containment"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "advisor"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "yEkWIdw4Wfw=",
+              "parentSpanId": "i5SQVNcid1E=",
+              "name": "call",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725696756394800",
+              "endTimeUnixNano": "1795725740007588400",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "framework"
+                  }
+                },
+                {
+                  "key": "spring.ai.advisor.name",
+                  "value": {
+                    "stringValue": "call"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "advisor"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "ExuevbLQquA=",
+              "parentSpanId": "yEkWIdw4Wfw=",
+              "name": "chat llama3.1:latest",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725696757915800",
+              "endTimeUnixNano": "1795725740007218900",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "chat"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.model",
+                  "value": {
+                    "stringValue": "llama3.1:latest"
+                  }
+                },
+                {
+                  "key": "token.usage",
+                  "value": {
+                    "stringValue": "available"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "b/R+8zm5SCQ=",
+              "parentSpanId": "xxI/lswPY/o=",
+              "name": "argus.evidence.validation",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725740009144100",
+              "endTimeUnixNano": "1795725740009815400",
+              "attributes": [
+                {
+                  "key": "agent",
+                  "value": {
+                    "stringValue": "GRAPH"
+                  }
+                },
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "OLLAMA"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "vbNb1zVcHqI=",
+              "parentSpanId": "q8NkAMv458k=",
+              "name": "argus.evidence.aggregation",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725740012090600",
+              "endTimeUnixNano": "1795725740015105700",
+              "attributes": [
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "OLLAMA"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "Jut6pz4Dyus=",
+              "parentSpanId": "q8NkAMv458k=",
+              "name": "argus.investigation.completion",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725740015529700",
+              "endTimeUnixNano": "1795725740018929200",
+              "attributes": [
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "OLLAMA"
+                  }
+                },
+                {
+                  "key": "status",
+                  "value": {
+                    "stringValue": "COMPLETED"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "argus-fraud-intelligence"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "org.springframework.boot",
+            "version": "4.1.1"
+          },
+          "spans": [
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "SLZzhLH1RCQ=",
+              "parentSpanId": "q8NkAMv458k=",
+              "name": "argus.agent",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725686322691300",
+              "endTimeUnixNano": "1795725717645348600",
+              "attributes": [
+                {
+                  "key": "agent",
+                  "value": {
+                    "stringValue": "BEHAVIORAL"
+                  }
+                },
+                {
+                  "key": "late",
+                  "value": {
+                    "stringValue": "false"
+                  }
+                },
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "OLLAMA"
+                  }
+                },
+                {
+                  "key": "status",
+                  "value": {
+                    "stringValue": "SUCCESS"
+                  }
+                },
+                {
+                  "key": "token.usage",
+                  "value": {
+                    "stringValue": "see.model"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "cfcgT1Hdt5U=",
+              "parentSpanId": "SLZzhLH1RCQ=",
+              "name": "spring_ai chat_client",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725686364739200",
+              "endTimeUnixNano": "1795725717629782300",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "framework"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "chat_client"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 2,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "GvxL7o4r7cw=",
+              "parentSpanId": "cfcgT1Hdt5U=",
+              "name": "tool _calling ",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725686372073500",
+              "endTimeUnixNano": "1795725717629317400",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "framework"
+                  }
+                },
+                {
+                  "key": "spring.ai.advisor.name",
+                  "value": {
+                    "stringValue": "Tool Calling Advisor"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "advisor"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "acUfE+swauI=",
+              "parentSpanId": "GvxL7o4r7cw=",
+              "name": "argus model round containment",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725693576299000",
+              "endTimeUnixNano": "1795725717628477600",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "framework"
+                  }
+                },
+                {
+                  "key": "spring.ai.advisor.name",
+                  "value": {
+                    "stringValue": "ARGUS model round containment"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "advisor"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "wR9wXt4VvAA=",
+              "parentSpanId": "acUfE+swauI=",
+              "name": "call",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725693576956400",
+              "endTimeUnixNano": "1795725717627869300",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "framework"
+                  }
+                },
+                {
+                  "key": "spring.ai.advisor.name",
+                  "value": {
+                    "stringValue": "call"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "advisor"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "KbhDh9s4rPk=",
+              "parentSpanId": "wR9wXt4VvAA=",
+              "name": "chat llama3.1:latest",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725693596865400",
+              "endTimeUnixNano": "1795725717627303800",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "chat"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.model",
+                  "value": {
+                    "stringValue": "llama3.1:latest"
+                  }
+                },
+                {
+                  "key": "token.usage",
+                  "value": {
+                    "stringValue": "available"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "n8DUulHDtgQ=",
+              "parentSpanId": "SLZzhLH1RCQ=",
+              "name": "argus.evidence.validation",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725717637982800",
+              "endTimeUnixNano": "1795725717641016900",
+              "attributes": [
+                {
+                  "key": "agent",
+                  "value": {
+                    "stringValue": "BEHAVIORAL"
+                  }
+                },
+                {
+                  "key": "mode",
+                  "value": {
+                    "stringValue": "OLLAMA"
+                  }
+                }
+              ],
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "argus-fraud-intelligence"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "org.springframework.boot",
+            "version": "4.1.1"
+          },
+          "spans": [
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "5qKIkgZBBI4=",
+              "parentSpanId": "a6Rz/SCv28Q=",
+              "name": "argus model round containment",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725686375022200",
+              "endTimeUnixNano": "1795725696752631200",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "framework"
+                  }
+                },
+                {
+                  "key": "spring.ai.advisor.name",
+                  "value": {
+                    "stringValue": "ARGUS model round containment"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "advisor"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "mMlY5GXt8ZI=",
+              "parentSpanId": "5qKIkgZBBI4=",
+              "name": "call",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725686380369200",
+              "endTimeUnixNano": "1795725696751439800",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "framework"
+                  }
+                },
+                {
+                  "key": "spring.ai.advisor.name",
+                  "value": {
+                    "stringValue": "call"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "advisor"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "YPaZD6G35/4=",
+              "parentSpanId": "mMlY5GXt8ZI=",
+              "name": "chat llama3.1:latest",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725687710425900",
+              "endTimeUnixNano": "1795725696750459700",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "chat"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.model",
+                  "value": {
+                    "stringValue": "llama3.1:latest"
+                  }
+                },
+                {
+                  "key": "token.usage",
+                  "value": {
+                    "stringValue": "available"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "xVMtZporyXw=",
+              "parentSpanId": "a6Rz/SCv28Q=",
+              "name": "execute_tool read_graph_relationship",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725696753091300",
+              "endTimeUnixNano": "1795725696755662400",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "execute_tool"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "tool_call"
+                  }
+                },
+                {
+                  "key": "spring.ai.tool.definition.name",
+                  "value": {
+                    "stringValue": "read_graph_relationship"
+                  }
+                },
+                {
+                  "key": "spring.ai.tool.type",
+                  "value": {
+                    "stringValue": "function"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "argus-fraud-intelligence"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "org.springframework.boot",
+            "version": "4.1.1"
+          },
+          "spans": [
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "m8/d15FKmPk=",
+              "parentSpanId": "GvxL7o4r7cw=",
+              "name": "argus model round containment",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725686375612300",
+              "endTimeUnixNano": "1795725693539727300",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "framework"
+                  }
+                },
+                {
+                  "key": "spring.ai.advisor.name",
+                  "value": {
+                    "stringValue": "ARGUS model round containment"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "advisor"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "sc6b/0fV2cs=",
+              "parentSpanId": "m8/d15FKmPk=",
+              "name": "call",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725686379918400",
+              "endTimeUnixNano": "1795725693533007300",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "framework"
+                  }
+                },
+                {
+                  "key": "spring.ai.advisor.name",
+                  "value": {
+                    "stringValue": "call"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "advisor"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "3M4oCkTzBIE=",
+              "parentSpanId": "sc6b/0fV2cs=",
+              "name": "chat llama3.1:latest",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725687710423600",
+              "endTimeUnixNano": "1795725693529986700",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "chat"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.model",
+                  "value": {
+                    "stringValue": "llama3.1:latest"
+                  }
+                },
+                {
+                  "key": "token.usage",
+                  "value": {
+                    "stringValue": "available"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            },
+            {
+              "traceId": "sgYHOTqGZI76q0oYbc+gjA==",
+              "spanId": "N7goUAz7tp8=",
+              "parentSpanId": "GvxL7o4r7cw=",
+              "name": "execute_tool read_behavioral_summary",
+              "kind": "SPAN_KIND_INTERNAL",
+              "startTimeUnixNano": "1795725693558685000",
+              "endTimeUnixNano": "1795725693573390300",
+              "attributes": [
+                {
+                  "key": "gen_ai.operation.name",
+                  "value": {
+                    "stringValue": "execute_tool"
+                  }
+                },
+                {
+                  "key": "spring.ai.kind",
+                  "value": {
+                    "stringValue": "tool_call"
+                  }
+                },
+                {
+                  "key": "spring.ai.tool.definition.name",
+                  "value": {
+                    "stringValue": "read_behavioral_summary"
+                  }
+                },
+                {
+                  "key": "spring.ai.tool.type",
+                  "value": {
+                    "stringValue": "function"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "status": {
+                "code": "STATUS_CODE_OK"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

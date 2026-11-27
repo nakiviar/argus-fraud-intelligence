@@ -29,7 +29,7 @@ export function evidence(snapshot) {
                 'Validation outcome':result.status === 'SUCCESS' ? 'Accepted' :
                     result.status === 'INVALID_RESPONSE' ? 'Rejected' : 'Unavailable',
                 'Rejected candidate references':'Unavailable'}),
-            node('h3',snapshot.mode === 'AZURE' ? 'Model-generated observation' : 'Simulated observation'),
+            node('h3',snapshot.mode === 'SIMULATED' ? 'Simulated observation' : 'Model-generated observation'),
             node('p',result.evidence?.observation ?? 'Observation unavailable.', 'finding'),
             node('h3','Verified source references'), references(result.verifiedReferences));
         target.append(card);

@@ -52,3 +52,7 @@ See [Domain model](domain-model.md) for contract ownership and examples.
 ## Dashboard integration
 
 Spring Boot serves a same-origin static UI. The UI uses the assessment API for the Hot Path, the asynchronous investigation API for REVIEW, and the scoped event history for correlation. It displays the original RiskDecision and visualizes only measured intervals. Runtime metadata exposes the active model mode and safe optional configuration. See [dashboard guide](dashboard.md).
+
+## Local inference and LGTM
+
+The demo-ollama profile supplies OpenAiChatModel over local Ollama /v1 with the same investigation agents. See [Ollama integration](ollama-integration.md).

@@ -34,7 +34,8 @@ export function architecture(assessment, snapshot, runtime) {
         [658,242,152,56,'Evidence Validator',null],
         [832,242,120,56,'Evidence Aggregator',aggregated ? 'SUCCESS' : 'WAITING'],
         [972,242,126,56,'Investigation Report',snapshot?.report ? snapshot.status : 'WAITING'],
-        [658,323,294,43,(snapshot?.mode ?? runtime?.mode) === 'AZURE' ? 'Microsoft Foundry / shared deployment' : 'Local simulation / model-free',null]
+        [658,323,294,43,({AZURE:'Microsoft Foundry / shared deployment', OLLAMA:'Ollama / shared local model',
+            SIMULATED:'Local simulation / model-free'})[snapshot?.mode ?? runtime?.mode] ?? 'Provider unavailable',null]
     ];
     for (const [x,y,w,h,name,state] of entries) {
         const group = svg('g',{class:'node '+color(state)});

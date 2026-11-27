@@ -127,3 +127,7 @@ The investigation observation is parented by submission and can link to a sample
 | Hosting | Spring Boot process | Local loopback demo | Azure Container Apps if suitable | Deployment and identity automation |
 | Telemetry | Micrometer, OTel and local OTLP pipeline | Simulated workloads | Azure Monitor as a separate validated design | Grafana UI and Azure Monitor verification |
 
+
+## Local inference and LGTM
+
+The demo-ollama profile uses Spring AI and a configured local model. The Hot Path remains deterministic. See [Ollama integration](../ollama-integration.md).

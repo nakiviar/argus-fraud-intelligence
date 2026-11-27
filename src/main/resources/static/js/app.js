@@ -299,8 +299,9 @@ render();
 api.runtime().then(data => {
     runtime = data;
     el('mode').textContent = data.mode;
-    el('verification').textContent = data.liveModelVerification === 'NOT_RECORDED_IN_THIS_PROCESS'
-        ? 'Live Foundry verification pending' : 'Live Foundry verification unavailable';
+    const verification = data.mode === 'SIMULATED' ? 'Simulated execution' :
+        data.liveModelVerification === 'NOT_RECORDED_IN_THIS_PROCESS' ? 'Probe not recorded in this process' : 'Verification unavailable';
+    el('verification').textContent = [data.provider, data.configuredModel, verification].filter(Boolean).join(' · ');
     render();
 }).catch(error => {
     el('mode').textContent = 'UNAVAILABLE';

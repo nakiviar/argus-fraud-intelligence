@@ -21,7 +21,20 @@ class DashboardMetadataController {
     @GetMapping("/api/v1/dashboard/runtime")
     RuntimeMetadata runtime() {
         var simulated = model.mode() == AgentDiagnosticResult.Mode.SIMULATED;
-        return new RuntimeMetadata(model.mode(), "NOT_RECORDED_IN_THIS_PROCESS",
+        var provider = switch (model.mode()) {
+            case SIMULATED -> "ARGUS fixtures";
+            case OLLAMA -> "Ollama";
+            case AZURE -> "Microsoft Foundry";
+        };
+        var configuredModel = switch (model.mode()) {
+            case SIMULATED -> null;
+            case OLLAMA -> environment.getProperty("argus.ollama.model");
+            case AZURE -> environment.getProperty("spring.ai.openai.chat.model");
+        };
+        if (configuredModel != null && !configuredModel.matches("[a-zA-Z0-9][a-zA-Z0-9._/:-]{0,164}")) {
+            configuredModel = null;
+        }
+        return new RuntimeMetadata(model.mode(), provider, configuredModel, "NOT_RECORDED_IN_THIS_PROCESS",
                 environment.getProperty("management.tracing.export.enabled", Boolean.class, false)
                         && environment.getProperty("management.tracing.export.otlp.enabled", Boolean.class, false),
                 grafanaUrl(), simulated ? simulationControls() : null);
@@ -48,7 +61,8 @@ class DashboardMetadataController {
         return null;
     }
 
-    record RuntimeMetadata(AgentDiagnosticResult.Mode mode, String liveModelVerification, boolean traceExportEnabled,
+    record RuntimeMetadata(AgentDiagnosticResult.Mode mode, String provider, String configuredModel,
+                           String liveModelVerification, boolean traceExportEnabled,
                            String grafanaUrl, SimulationControls simulation) {}
     record SimulationControls(AgentType failureAgent, AgentType delayAgent, String delay) {}
 }

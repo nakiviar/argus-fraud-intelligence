@@ -85,3 +85,7 @@ java -jar $jar --spring.profiles.active=demo-local,demo-observability --argus.da
 
 Run a REVIEW investigation and copy its trace ID. Open Grafana Explore at http://127.0.0.1:3000/, select Tempo and query by Trace ID. Use the bundled [trace assets](assets/README.md) if the engine or UI is unavailable.
 
+
+## Local inference and LGTM
+
+Use `./scripts/start-argus-demo.ps1 -Mode Ollama -Observability` for local inference and LGTM, or `-Mode Simulated` for the credential-free deterministic path.

@@ -333,3 +333,7 @@ static ChatClient chatClient(FoundrySettings settings, SpringAiOpenAiHttpClient 
 - [Tool Calling](../tool-calling.md), [Structured Output](../structured-output.md), [dominio](../domain-model.md) y [trazas](../distributed-tracing.md).
 - [Azure e identidad](../azure-integration.md) y [comparación implementada y propuesta](ARCHITECTURE-AS-BUILT.md).
 
+
+## Local inference and LGTM
+
+**Adaptador Ollama.** `OllamaConfiguration.ollamaChatClient` conserva la abstracción ChatModel y apunta al origen local. Las herramientas y el validador son los mismos que en Foundry. Consulta [la guía de Ollama](../ollama-integration.md).
